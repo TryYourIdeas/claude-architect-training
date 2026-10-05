@@ -1,4 +1,6 @@
 import { expect, test, type Page } from '@playwright/test'
+import { answerCurrentQuestion } from './helpers'
+
 
 async function gotoHome(page: Page) {
   await page.goto('/')
@@ -16,8 +18,7 @@ test('coaching shows one question at a time and immediate feedback', async ({ pa
     // Only one question is on screen at a time.
     await expect(page.locator('fieldset')).toHaveCount(1)
 
-    const choice = page.locator('fieldset input').first()
-    await choice.check()
+    await answerCurrentQuestion(page)
     await page.getByRole('button', { name: 'Check answer' }).click()
 
     const feedback = page.getByTestId('feedback')

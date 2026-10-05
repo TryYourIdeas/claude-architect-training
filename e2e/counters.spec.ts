@@ -1,4 +1,6 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
+import { answerCurrentQuestion } from './helpers'
+
 
 test('answering in coaching updates the question counters', async ({ page }) => {
   await page.goto('/stats')
@@ -11,7 +13,7 @@ test('answering in coaching updates the question counters', async ({ page }) => 
   await page.getByTestId('coach-size').selectOption('5')
   await page.getByRole('button', { name: 'Start coaching' }).click()
   await expect(page).toHaveURL(/\/coach\//)
-  await page.locator('fieldset input').first().check()
+  await answerCurrentQuestion(page)
   await page.getByRole('button', { name: 'Check answer' }).click()
   await expect(page.getByTestId('feedback')).toBeVisible()
 

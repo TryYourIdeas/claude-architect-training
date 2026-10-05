@@ -72,12 +72,12 @@ Assumptions where the guide is silent:
 
 ## Question bank
 
-`data/questions.json` holds 90 items: 6 scenarios × 15 questions, each tagged with its domain and
-task statement. Some sample questions from the guide are adapted into the bank. The rest are written
-from the task statements. They are a study aid, not official exam content.
+`data/questions.json` holds 169 items across the 6 scenarios (1: 26, 2: 33, 3: 27, 4: 26, 5: 28, 6: 29),
+each tagged with its domain and task statement. Every task statement in the exam guide has at least two
+questions, and the guide's sample questions are adapted into the bank. The rest are written from the
+guide's knowledge and skills lists, in the same style. They are a study aid, not official exam content.
 
-The practice exam uses all 60 items from the 4 scenarios it draws, so the bank size limits variety.
-Adding questions to the JSON file and re-running `npm run db:seed` expands it. Every item needs
+The practice exam draws 60 items from the 4 scenarios it selects, so each attempt varies. Adding questions to the JSON file and re-running `npm run db:seed` expands it. Every item needs
 `selectCount` equal to the length of its `correct` array; `tests/unit/assembly.test.ts` enforces this.
 
 ## Architecture
