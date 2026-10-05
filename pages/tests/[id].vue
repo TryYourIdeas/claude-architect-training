@@ -102,6 +102,7 @@ onBeforeUnmount(() => clearInterval(timer))
           :position="current.position"
           :total="items.length"
           :stem="current.stem"
+          :scenario="current.scenario"
           :options="current.options"
           :select-count="current.selectCount"
           :task-statement="current.taskStatement"

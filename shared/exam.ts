@@ -23,6 +23,16 @@ export const SCENARIOS: Readonly<Record<number, string>> = {
   6: 'Structured Data Extraction',
 }
 
+/** Scenario context from the exam guide, shown above questions that belong to each scenario. */
+export const SCENARIO_DESCRIPTIONS: Readonly<Record<number, string>> = {
+  1: 'You are building a customer support resolution agent with the Claude Agent SDK. The agent handles high-ambiguity requests such as returns, billing disputes and account issues. It has access to your backend systems through custom MCP tools (get_customer, lookup_order, process_refund, escalate_to_human). The target is 80%+ first-contact resolution while knowing when to escalate.',
+  2: 'Your team uses Claude Code to accelerate software development: code generation, refactoring, debugging and documentation. You need to integrate it into your development workflow with custom slash commands, CLAUDE.md configurations, and an understanding of when to use plan mode versus direct execution.',
+  3: 'You are building a multi-agent research system with the Claude Agent SDK. A coordinator agent delegates to specialized subagents: one searches the web, one analyzes documents, one synthesizes findings, and one generates reports. The system researches topics and produces comprehensive, cited reports.',
+  4: 'You are building developer productivity tools with the Claude Agent SDK. The agent helps engineers explore unfamiliar codebases, understand legacy systems, generate boilerplate code, and automate repetitive tasks. It uses the built-in tools (Read, Write, Bash, Grep, Glob) and integrates with Model Context Protocol (MCP) servers.',
+  5: 'You are integrating Claude Code into your continuous integration and continuous deployment (CI/CD) pipeline. The system runs automated code reviews, generates test cases, and provides feedback on pull requests. You need prompts that give actionable feedback and minimize false positives.',
+  6: 'You are building a structured data extraction system using Claude. The system extracts information from unstructured documents, validates the output against JSON schemas, and maintains high accuracy. It must handle edge cases gracefully and integrate with downstream systems.',
+}
+
 export const EXAM = {
   items: 60,
   timeLimitMinutes: 120,

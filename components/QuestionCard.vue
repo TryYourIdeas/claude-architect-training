@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { SCENARIO_DESCRIPTIONS, SCENARIOS } from '~~/shared/exam'
 
 interface Option { key: string, text: string }
 
@@ -11,6 +12,8 @@ const props = defineProps<{
   selectCount: number
   selected: string[]
   taskStatement?: string
+  /** Scenario the question is based on (1–6); its context is shown above the stem. */
+  scenario?: number
   disabled?: boolean
   /** When true, options are marked against `correct` (used after an answer is locked in). */
   reveal?: boolean
@@ -61,6 +64,11 @@ function onToggle(key: string, checked: boolean) {
       <span v-if="taskStatement" class="question__task">Task {{ taskStatement }}</span>
     </legend>
 
+    <aside v-if="scenario && SCENARIOS[scenario]" class="question__scenario" data-testid="scenario">
+      <p class="question__scenario-title">Scenario {{ scenario }}: {{ SCENARIOS[scenario] }}</p>
+      <p class="question__scenario-body">{{ SCENARIO_DESCRIPTIONS[scenario] }}</p>
+    </aside>
+
     <p class="question__stem">{{ stem }}</p>
     <p class="question__instruction">{{ instruction }}</p>
 
@@ -90,6 +98,9 @@ function onToggle(key: string, checked: boolean) {
 .question { border: 0; padding: 0; margin: 0; }
 .question__legend { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; color: var(--muted); padding: 0; margin-bottom: 0.75rem; }
 .question__task { font-weight: 600; }
+.question__scenario { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 8px; padding: 0.75rem 1rem; margin: 0 0 1rem; }
+.question__scenario-title { margin: 0 0 0.35rem; font-weight: 600; font-size: 0.9rem; }
+.question__scenario-body { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--text); }
 .question__stem { font-size: 1.1rem; line-height: 1.5; margin: 0 0 0.5rem; }
 .question__instruction { font-size: 0.85rem; color: var(--muted); margin: 0 0 1rem; font-style: italic; }
 .question__options { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Scenario context (name and description from the exam guide) shown above each coaching and exam question.
+
 - Coaching chat: a per-question assistant backed by the Claude Messages API, configured from `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` and `ANTHROPIC_BASE_URL`. It withholds the answer until the learner has answered.
 
 - Question bank expanded to 169 items, with at least two questions for every exam-guide task statement, in the style of the guide's sample questions.
