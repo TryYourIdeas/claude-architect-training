@@ -37,6 +37,9 @@ export const DIAGNOSTIC = {
   items: 10,
 } as const
 
+/** Consecutive correct answers that clear a question's wrong counter. */
+export const CLEAR_WRONG_AFTER_RIGHT = 3
+
 export const COACH = {
   defaultSize: 10,
   minSize: 1,

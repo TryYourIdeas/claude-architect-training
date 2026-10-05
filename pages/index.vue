@@ -125,6 +125,7 @@ function formatDate(ms: number) {
           <NuxtLink v-else :to="t.mode === 'coaching' ? `/coach/${t.id}` : `/tests/${t.id}`">Resume</NuxtLink>
         </li>
       </ul>
+      <p class="muted"><NuxtLink to="/stats">View question counters</NuxtLink></p>
     </section>
   </div>
 </template>

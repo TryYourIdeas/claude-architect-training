@@ -39,6 +39,20 @@ CREATE TABLE IF NOT EXISTS test_items (
   PRIMARY KEY (test_id, position)
 );
 
+CREATE TABLE IF NOT EXISTS question_stats (
+  question_id TEXT PRIMARY KEY REFERENCES questions(id),
+  shown       INTEGER NOT NULL DEFAULT 0,
+  right_count INTEGER NOT NULL DEFAULT 0,
+  wrong_count INTEGER NOT NULL DEFAULT 0
+);
+
+-- A question counts as shown once per coaching session, however often the page is reloaded.
+CREATE TABLE IF NOT EXISTS coach_presentations (
+  test_id     TEXT NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
+  question_id TEXT NOT NULL REFERENCES questions(id),
+  PRIMARY KEY (test_id, question_id)
+);
+
 CREATE TABLE IF NOT EXISTS test_answers (
   test_id     TEXT NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
   question_id TEXT NOT NULL REFERENCES questions(id),

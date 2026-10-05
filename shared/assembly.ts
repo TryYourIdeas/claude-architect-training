@@ -28,24 +28,50 @@ export function pickScenarios(rng: Rng, count = EXAM.scenariosDrawn, bankSize = 
   return shuffle(all, rng).slice(0, count).sort((a, b) => a - b)
 }
 
+export interface QuestionStat {
+  shown: number
+  wrong: number
+}
+
+export type StatLookup = (questionId: string) => QuestionStat | undefined
+
+/**
+ * Orders questions for coaching: most wrong answers first, then least shown.
+ * Ties are broken randomly so repeated sessions do not always start the same way.
+ */
+export function prioritize(questions: readonly Question[], rng: Rng, stats: StatLookup = () => undefined): Question[] {
+  return shuffle(questions, rng).sort((a, b) => {
+    const sa = stats(a.id)
+    const sb = stats(b.id)
+    if ((sa?.wrong ?? 0) !== (sb?.wrong ?? 0)) return (sb?.wrong ?? 0) - (sa?.wrong ?? 0)
+    return (sa?.shown ?? 0) - (sb?.shown ?? 0)
+  })
+}
+
 /**
  * Fills per-domain quotas from `pool`. Shortfalls in a domain are topped up
  * from the remaining pool so the test still reaches `total` when possible.
+ * `rank` decides which candidates within a domain are chosen first.
  */
-function fillQuotas(pool: readonly Question[], total: number, rng: Rng): { items: Question[], shortfall: number } {
+function fillQuotas(
+  pool: readonly Question[],
+  total: number,
+  rng: Rng,
+  rank: (qs: readonly Question[]) => Question[] = qs => shuffle(qs, rng),
+): { items: Question[], shortfall: number } {
   const quotas = domainQuotas(total)
   const chosen: Question[] = []
   const used = new Set<string>()
 
   for (const domain of DOMAINS) {
-    const candidates = shuffle(pool.filter(q => q.domain === domain.id), rng)
+    const candidates = rank(pool.filter(q => q.domain === domain.id))
     for (const q of candidates.slice(0, quotas[domain.id])) {
       chosen.push(q)
       used.add(q.id)
     }
   }
 
-  const leftovers = shuffle(pool.filter(q => !used.has(q.id)), rng)
+  const leftovers = rank(pool.filter(q => !used.has(q.id)))
   while (chosen.length < total && leftovers.length > 0) {
     chosen.push(leftovers.shift()!)
   }
@@ -72,11 +98,18 @@ export function assembleDiagnostic(bank: readonly Question[], rng: Rng): Questio
 
 /**
  * Coaching session: one question per item, presented in random order.
- * With no domain, questions are balanced across all five domains by blueprint weight.
- * With a domain, the session draws only from that domain (and may be shorter than requested).
+ * Questions are chosen by priority (most wrong, then least shown). With no domain, the
+ * choice is balanced across all five domains by blueprint weight; with a domain, the
+ * session draws only from that domain and may be shorter than requested.
  */
-export function assembleCoachSession(bank: readonly Question[], rng: Rng, size: number, domain: number | null): Question[] {
-  if (domain === null) return fillQuotas(bank, size, rng).items
-  const pool = shuffle(bank.filter(q => q.domain === domain), rng)
-  return pool.slice(0, size)
+export function assembleCoachSession(
+  bank: readonly Question[],
+  rng: Rng,
+  size: number,
+  domain: number | null,
+  stats: StatLookup = () => undefined,
+): Question[] {
+  const rank = (qs: readonly Question[]) => prioritize(qs, rng, stats)
+  if (domain === null) return shuffle(fillQuotas(bank, size, rng, rank).items, rng)
+  return shuffle(rank(bank.filter(q => q.domain === domain)).slice(0, size), rng)
 }

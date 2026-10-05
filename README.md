@@ -35,6 +35,20 @@ npm run dev                 # http://localhost:3000
 - **Diagnostic** — 10 untimed questions across all domains, to find weak areas.
 - **Practice exam** — the full simulation described below.
 
+## Question counters
+
+Every question keeps three counters, shown on the `/stats` page:
+
+- **Shown** — coaching sessions that presented the question (counted once per session).
+- **Right** — correct answers in a row. A wrong answer sets it to 0. When it reaches 3, it is reset to 0
+  and the Wrong counter is cleared.
+- **Wrong** — wrong answers since the last clearing. Set to 0 after 3 correct answers in a row.
+
+Coaching chooses questions by the highest Wrong count first, then the least Shown. With *All domains*,
+this ordering is applied within each domain's blueprint quota, so every domain stays represented.
+
+Counters are updated by coaching sessions only. Diagnostic and practice exam answers do not change them.
+
 ## Exam rules modelled
 
 | Rule | Practice exam | Diagnostic |
