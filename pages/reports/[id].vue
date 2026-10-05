@@ -8,6 +8,8 @@ const { data: report, error } = await useFetch<Report>(`/api/tests/${id}/report`
 
 const missed = computed(() => report.value?.items.filter(i => !i.isCorrect) ?? [])
 const isPractice = computed(() => report.value?.mode === 'practice')
+const isCoaching = computed(() => report.value?.mode === 'coaching')
+const title = computed(() => ({ practice: 'Practice exam report', diagnostic: 'Diagnostic report', coaching: 'Coaching session results' })[report.value?.mode ?? 'diagnostic'])
 </script>
 
 <template>
@@ -17,13 +19,18 @@ const isPractice = computed(() => report.value?.mode === 'practice')
     </p>
 
     <template v-else-if="report">
-      <h1>{{ isPractice ? 'Practice exam report' : 'Diagnostic report' }}</h1>
+      <h1>{{ title }}</h1>
 
       <section class="card summary">
-        <div>
+        <div v-if="!isCoaching">
           <p class="muted">Scaled score</p>
           <p class="score" data-testid="scaled-score">{{ report.scaledScore }}</p>
           <p class="muted">{{ report.correctCount }} of {{ report.totalItems }} correct</p>
+        </div>
+        <div v-else>
+          <p class="muted">Correct</p>
+          <p class="score" data-testid="coach-score">{{ report.correctCount }} / {{ report.totalItems }}</p>
+          <p class="muted">Coaching is not scored on the exam scale.</p>
         </div>
         <div v-if="isPractice">
           <p class="verdict" :class="report.passed ? 'verdict--pass' : 'verdict--fail'" data-testid="verdict">
@@ -36,7 +43,7 @@ const isPractice = computed(() => report.value?.mode === 'practice')
           <ul><li v-for="name in report.scenarioNames" :key="name">{{ name }}</li></ul>
         </div>
       </section>
-      <p class="muted note">{{ report.scaleNote }}</p>
+      <p v-if="!isCoaching" class="muted note">{{ report.scaleNote }}</p>
 
       <section class="card">
         <h2>Results by domain</h2>
@@ -66,6 +73,7 @@ const isPractice = computed(() => report.value?.mode === 'practice')
 
       <nav class="actions">
         <NuxtLink class="btn" to="/">Back to start</NuxtLink>
+        <NuxtLink v-if="isCoaching" class="btn btn--ghost" to="/">Start another session</NuxtLink>
       </nav>
     </template>
   </div>

@@ -12,6 +12,9 @@ const props = defineProps<{
   selected: string[]
   taskStatement?: string
   disabled?: boolean
+  /** When true, options are marked against `correct` (used after an answer is locked in). */
+  reveal?: boolean
+  correct?: string[]
 }>()
 
 const emit = defineEmits<{
@@ -28,6 +31,15 @@ function isChecked(key: string): boolean {
 
 function isBlocked(key: string): boolean {
   return !!props.disabled || (isMulti.value && !isChecked(key) && props.selected.length >= props.selectCount)
+}
+
+function optionState(key: string): 'correct' | 'wrong' | 'missed' | '' {
+  if (!props.reveal || !props.correct) return ''
+  const isRight = props.correct.includes(key)
+  if (isRight && isChecked(key)) return 'correct'
+  if (isRight) return 'missed'
+  if (isChecked(key)) return 'wrong'
+  return ''
 }
 
 function onToggle(key: string, checked: boolean) {
@@ -54,7 +66,7 @@ function onToggle(key: string, checked: boolean) {
 
     <ul class="question__options">
       <li v-for="option in options" :key="option.key">
-        <label class="question__option">
+        <label class="question__option" :class="optionState(option.key) ? `question__option--${optionState(option.key)}` : ''" :data-state="optionState(option.key) || undefined">
           <input
             :type="isMulti ? 'checkbox' : 'radio'"
             :name="groupName"
@@ -65,6 +77,9 @@ function onToggle(key: string, checked: boolean) {
           >
           <span class="question__key">{{ option.key }}.</span>
           <span>{{ option.text }}</span>
+          <span v-if="optionState(option.key) === 'correct'" class="question__badge">Correct</span>
+          <span v-else-if="optionState(option.key) === 'wrong'" class="question__badge question__badge--wrong">Your answer</span>
+          <span v-else-if="optionState(option.key) === 'missed'" class="question__badge">Correct answer</span>
         </label>
       </li>
     </ul>
@@ -84,4 +99,10 @@ function onToggle(key: string, checked: boolean) {
 }
 .question__option:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
 .question__key { font-weight: 600; }
+.question__option { grid-template-columns: auto auto 1fr auto; }
+.question__option--correct { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+.question__option--wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, transparent); }
+.question__option--missed { border-style: dashed; border-color: var(--ok); }
+.question__badge { font-size: 0.75rem; font-weight: 600; color: var(--ok); white-space: nowrap; }
+.question__badge--wrong { color: var(--bad); }
 </style>

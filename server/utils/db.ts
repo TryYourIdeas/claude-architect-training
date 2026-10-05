@@ -20,10 +20,11 @@ CREATE TABLE IF NOT EXISTS questions (
 
 CREATE TABLE IF NOT EXISTS tests (
   id            TEXT PRIMARY KEY,
-  mode          TEXT NOT NULL CHECK (mode IN ('diagnostic', 'practice')),
-  scenarios     TEXT,                 -- JSON: [1,3,4,6] for practice, null for diagnostic
+  mode          TEXT NOT NULL,        -- 'diagnostic' | 'practice' | 'coaching' (validated in code)
+  scenarios     TEXT,                 -- JSON: [1,3,4,6] for practice, null otherwise
+  domain        INTEGER,              -- coaching only: a single domain, or null for all domains
   created_at    INTEGER NOT NULL,
-  deadline_at   INTEGER,              -- null = untimed (diagnostic)
+  deadline_at   INTEGER,              -- null = untimed
   finished_at   INTEGER,
   correct_count INTEGER,
   total_items   INTEGER,
@@ -105,6 +106,39 @@ export function seedQuestions(db: Db, file: string): number {
   return replaceAll(questions)
 }
 
+/**
+ * Brings databases created by earlier versions up to date. Earlier builds restricted
+ * tests.mode with a CHECK constraint, which SQLite cannot alter, so the table is rebuilt.
+ */
+function migrate(db: Db): void {
+  const info = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'tests'").get() as { sql: string } | undefined
+  if (!info) return
+
+  const hasCheck = /CHECK\s*\(\s*mode/i.test(info.sql)
+  const columns = (db.prepare('PRAGMA table_info(tests)').all() as { name: string }[]).map(c => c.name)
+  if (!hasCheck && columns.includes('domain')) return
+
+  db.pragma('foreign_keys = OFF')
+  try {
+    db.transaction(() => {
+      db.exec(`
+        CREATE TABLE tests_new (
+          id TEXT PRIMARY KEY, mode TEXT NOT NULL, scenarios TEXT, domain INTEGER,
+          created_at INTEGER NOT NULL, deadline_at INTEGER, finished_at INTEGER,
+          correct_count INTEGER, total_items INTEGER, scaled_score INTEGER, passed INTEGER
+        );
+        INSERT INTO tests_new (id, mode, scenarios, created_at, deadline_at, finished_at, correct_count, total_items, scaled_score, passed)
+          SELECT id, mode, scenarios, created_at, deadline_at, finished_at, correct_count, total_items, scaled_score, passed FROM tests;
+        DROP TABLE tests;
+        ALTER TABLE tests_new RENAME TO tests;
+      `)
+    })()
+  }
+  finally {
+    db.pragma('foreign_keys = ON')
+  }
+}
+
 /** Opens (creating if needed) a database, applies the schema, and seeds the bank when empty. */
 export function openDatabase(path: string, questionsPath: string): Db {
   if (path !== ':memory:') mkdirSync(dirname(path), { recursive: true })
@@ -113,6 +147,7 @@ export function openDatabase(path: string, questionsPath: string): Db {
   db.pragma('journal_mode = WAL')
   db.pragma('foreign_keys = ON')
   db.exec(SCHEMA)
+  migrate(db)
 
   const count = (db.prepare('SELECT COUNT(*) AS n FROM questions').get() as { n: number }).n
   if (count === 0) seedQuestions(db, questionsPath)

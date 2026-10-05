@@ -4,7 +4,7 @@ import { DOMAINS, EXAM, isCorrectSelection, isPass, SCALE_NOTE, SCENARIOS, scale
 import type { Db } from '../utils/db'
 import { rowToQuestion } from '../utils/db'
 
-export type TestMode = 'diagnostic' | 'practice'
+export type TestMode = 'diagnostic' | 'practice' | 'coaching'
 
 export class ExamError extends Error {
   constructor(public statusCode: number, message: string) {
@@ -12,10 +12,11 @@ export class ExamError extends Error {
   }
 }
 
-interface TestRow {
+export interface TestRow {
   id: string
   mode: TestMode
   scenarios: string | null
+  domain: number | null
   created_at: number
   deadline_at: number | null
   finished_at: number | null
@@ -84,29 +85,29 @@ export interface Report {
   items: ReportItem[]
 }
 
-function loadQuestions(db: Db): Question[] {
+export function loadQuestions(db: Db): Question[] {
   return (db.prepare('SELECT * FROM questions').all() as Parameters<typeof rowToQuestion>[0][]).map(rowToQuestion)
 }
 
-function getTestRow(db: Db, id: string): TestRow {
+export function getTestRow(db: Db, id: string): TestRow {
   const row = db.prepare('SELECT * FROM tests WHERE id = ?').get(id) as TestRow | undefined
   if (!row) throw new ExamError(404, 'Test not found')
   return row
 }
 
-function itemsFor(db: Db, id: string): Question[] {
+export function itemsFor(db: Db, id: string): Question[] {
   return (db.prepare(`
     SELECT q.* FROM test_items ti JOIN questions q ON q.id = ti.question_id
     WHERE ti.test_id = ? ORDER BY ti.position
   `).all(id) as Parameters<typeof rowToQuestion>[0][]).map(rowToQuestion)
 }
 
-function answersFor(db: Db, id: string): Record<string, string[]> {
+export function answersFor(db: Db, id: string): Record<string, string[]> {
   const rows = db.prepare('SELECT question_id, selected FROM test_answers WHERE test_id = ?').all(id) as { question_id: string, selected: string }[]
   return Object.fromEntries(rows.map(r => [r.question_id, JSON.parse(r.selected) as string[]]))
 }
 
-export function createTest(db: Db, mode: TestMode, now = Date.now(), rng: Rng = Math.random): string {
+export function createTest(db: Db, mode: Exclude<TestMode, 'coaching'>, now = Date.now(), rng: Rng = Math.random): string {
   const bank = loadQuestions(db)
   if (bank.length === 0) throw new ExamError(500, 'Question bank is empty')
 

@@ -26,6 +26,15 @@ npm run dev                 # http://localhost:3000
 | `npm run test:e2e` | Playwright UI flows (starts the dev server against `data/e2e.db`) |
 | `npx nuxi typecheck` | Strict type check of app, server and shared code |
 
+## Modes
+
+- **Coaching** — learn one question at a time. Choose *All domains* (questions balanced by blueprint
+  weight) or a single domain, and 5–20 questions. Each answer is locked when checked, and the feedback
+  shows whether it was right, the correct answer, and the explanation before you move on. Sessions
+  are untimed and appear in the summary as a per-domain breakdown, not a scaled score.
+- **Diagnostic** — 10 untimed questions across all domains, to find weak areas.
+- **Practice exam** — the full simulation described below.
+
 ## Exam rules modelled
 
 | Rule | Practice exam | Diagnostic |
@@ -60,17 +69,20 @@ Adding questions to the JSON file and re-running `npm run db:seed` expands it. E
 ## Architecture
 
 ```
-pages/           index (start + history), tests/[id] (timed test), reports/[id]
-components/      QuestionCard (radio or checkbox, based on selectCount)
-server/api/      thin route handlers → server/services/exam.ts
-server/services/ lifecycle: create, save answer, deadline, grade, report
+pages/           index (start + history), coach/[id] (coaching),
+                 tests/[id] (timed exam), reports/[id]
+components/      QuestionCard (radio or checkbox by selectCount; can reveal correct options)
+server/api/      thin route handlers → server/services/{exam,coach}.ts
+server/services/ exam: create, save answer, deadline, grade, report
+                 coach: one-at-a-time sessions, locked answers, immediate feedback
 server/utils/db  SQLite schema, seeding, getDb() singleton
 shared/          exam rules (weights, constraints, scoring) and test assembly — pure, unit-tested
 data/            questions.json (seed) and architect.db (created at runtime, git-ignored)
 ```
 
-SQLite tables: `questions`, `tests`, `test_items` (fixed order per attempt), `test_answers`.
-Reseeding upserts questions, so attempt history survives a reseed.
+SQLite tables: `questions`, `tests` (mode `diagnostic`, `practice` or `coaching`), `test_items` (fixed
+order per session), `test_answers`. Reseeding upserts questions, so history survives a reseed. Databases
+created by earlier versions are migrated automatically on open.
 
 ## Not yet done
 

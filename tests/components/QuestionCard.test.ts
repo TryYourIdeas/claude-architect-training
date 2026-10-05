@@ -61,4 +61,31 @@ describe('QuestionCard', () => {
     expect(screen.getByLabelText(/Third option/)).toBeChecked()
     expect(screen.getByLabelText(/First option/)).not.toBeChecked()
   })
+
+  it('marks the correct answer and the learner\'s wrong choice after reveal', () => {
+    render(QuestionCard, {
+      props: {
+        position: 2,
+        total: 10,
+        stem: 'Pick one.',
+        options,
+        selectCount: 1,
+        selected: ['B'],
+        correct: ['A'],
+        reveal: true,
+        disabled: true,
+      },
+    })
+    expect(screen.getByText('Correct answer')).toBeInTheDocument()
+    expect(screen.getByText('Your answer')).toBeInTheDocument()
+    expect(screen.getByLabelText(/First option/).closest('label')).toHaveAttribute('data-state', 'missed')
+    expect(screen.getByLabelText(/Second option/).closest('label')).toHaveAttribute('data-state', 'wrong')
+    expect(screen.getAllByRole('radio').every(r => (r as HTMLInputElement).disabled)).toBe(true)
+  })
+
+  it('shows no verdict badges before reveal', () => {
+    mountCard({ selected: ['B'] })
+    expect(screen.queryByText('Your answer')).not.toBeInTheDocument()
+    expect(screen.queryByText('Correct answer')).not.toBeInTheDocument()
+  })
 })
