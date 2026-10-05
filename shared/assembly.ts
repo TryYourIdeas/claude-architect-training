@@ -69,3 +69,14 @@ export function assembleDiagnostic(bank: readonly Question[], rng: Rng): Questio
   const { items } = fillQuotas(bank, DIAGNOSTIC.items, rng)
   return shuffle(items, rng)
 }
+
+/**
+ * Coaching session: one question per item, presented in random order.
+ * With no domain, questions are balanced across all five domains by blueprint weight.
+ * With a domain, the session draws only from that domain (and may be shorter than requested).
+ */
+export function assembleCoachSession(bank: readonly Question[], rng: Rng, size: number, domain: number | null): Question[] {
+  if (domain === null) return fillQuotas(bank, size, rng).items
+  const pool = shuffle(bank.filter(q => q.domain === domain), rng)
+  return pool.slice(0, size)
+}

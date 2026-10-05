@@ -37,6 +37,12 @@ export const DIAGNOSTIC = {
   items: 10,
 } as const
 
+export const COACH = {
+  defaultSize: 10,
+  minSize: 1,
+  maxSize: 30,
+} as const
+
 export const SCALE_NOTE
   = 'Scaled score is an approximation: the real exam uses a standard-setting study and equating that is not published. Scores here are linear from percent correct.'
 
