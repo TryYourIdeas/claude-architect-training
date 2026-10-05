@@ -20,9 +20,18 @@ describe('question bank', () => {
     expect(new Set(bank.map(q => q.id)).size).toBe(bank.length)
   })
 
-  it('has 15 questions in each of the 6 scenarios', () => {
+  it('has at least 15 questions in each of the 6 scenarios', () => {
     for (let s = 1; s <= EXAM.scenarioBankSize; s++) {
-      expect(bank.filter(q => q.scenario === s)).toHaveLength(15)
+      expect(bank.filter(q => q.scenario === s).length).toBeGreaterThanOrEqual(15)
+    }
+  })
+
+  it('covers every task statement in the exam guide at least twice', () => {
+    const tasks = ['1.1', '1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '2.1', '2.2', '2.3', '2.4', '2.5',
+      '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '4.1', '4.2', '4.3', '4.4', '4.5', '4.6',
+      '5.1', '5.2', '5.3', '5.4', '5.5', '5.6']
+    for (const t of tasks) {
+      expect(bank.filter(q => q.taskStatement === t).length, `task ${t}`).toBeGreaterThanOrEqual(2)
     }
   })
 
@@ -68,9 +77,10 @@ describe('assemblePractice', () => {
   })
 
   it('reports a shortfall when the chosen scenarios cannot supply 60 items', () => {
-    const { items, shortfall } = assemblePractice(bank, seeded(1), [1, 2])
-    expect(items).toHaveLength(30)
-    expect(shortfall).toBe(30)
+    const pool = bank.filter(q => q.scenario === 1).length
+    const { items, shortfall } = assemblePractice(bank, seeded(1), [1])
+    expect(items).toHaveLength(Math.min(EXAM.items, pool))
+    expect(shortfall).toBe(EXAM.items - Math.min(EXAM.items, pool))
   })
 
   it('represents each domain at its blueprint quota when the pool allows', () => {

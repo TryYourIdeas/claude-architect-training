@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Question bank expanded to 169 items, with at least two questions for every exam-guide task statement, in the style of the guide's sample questions.
+
 - Per-question counters (Shown, Right, Wrong) with the clearing rules, persisted in SQLite and shown on `/stats`.
 - Coaching selects by highest Wrong count, then least Shown, within each domain's quota.
 
