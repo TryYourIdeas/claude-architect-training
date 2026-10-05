@@ -15,6 +15,7 @@ test('coaching shows one question at a time and immediate feedback', async ({ pa
 
   for (let i = 1; i <= 5; i++) {
     await expect(page.getByText(`Question ${i} of 5`)).toBeVisible()
+    await expect(page.getByTestId('scenario')).toContainText(/Scenario \d: /)
     // Only one question is on screen at a time.
     await expect(page.locator('fieldset')).toHaveCount(1)
 

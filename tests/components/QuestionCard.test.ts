@@ -10,7 +10,7 @@ const options = [
   { key: 'D', text: 'Fourth option' },
 ]
 
-function mountCard(props: Partial<{ selectCount: number, selected: string[] }> = {}) {
+function mountCard(props: Partial<{ selectCount: number, selected: string[], scenario: number }> = {}) {
   const onUpdate = vi.fn()
   render(QuestionCard, {
     props: {
@@ -87,5 +87,17 @@ describe('QuestionCard', () => {
     mountCard({ selected: ['B'] })
     expect(screen.queryByText('Your answer')).not.toBeInTheDocument()
     expect(screen.queryByText('Correct answer')).not.toBeInTheDocument()
+  })
+
+  it('shows the scenario name and context above the question when one is given', () => {
+    mountCard({ scenario: 2 })
+    const block = screen.getByTestId('scenario')
+    expect(block).toHaveTextContent('Scenario 2: Code Generation with Claude Code')
+    expect(block).toHaveTextContent('CLAUDE.md configurations')
+  })
+
+  it('shows no scenario block for questions without a scenario', () => {
+    mountCard({})
+    expect(screen.queryByTestId('scenario')).not.toBeInTheDocument()
   })
 })
