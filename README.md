@@ -35,6 +35,27 @@ npm run dev                 # http://localhost:3000
 - **Diagnostic** — 10 untimed questions across all domains, to find weak areas.
 - **Practice exam** — the full simulation described below.
 
+## Coaching chat
+
+Each coaching question has an **Ask about this question** box that calls the Claude Messages API.
+Configure it in `.env`:
+
+| Variable | Purpose |
+|---|---|
+| `ANTHROPIC_API_KEY` | API token. Used only on the server and never sent to the browser. |
+| `ANTHROPIC_MODEL` | Model id, for example `claude-sonnet-5`. |
+| `ANTHROPIC_BASE_URL` | Optional API endpoint. Leave empty for the default. |
+
+Behaviour:
+
+- Before a learner checks their answer, the assistant is not given the correct answer or the
+  explanation, so it cannot give the answer away. After checking, the answer and explanation are
+  included so the learner can ask why each option is right or wrong.
+- Each question has its own conversation. Moving to the next question starts a fresh one.
+- Only the last 12 messages are sent to Claude, and each message is limited to 2000 characters.
+- If the variables are missing, the chat shows "The chat assistant is not configured" and the rest
+  of the coaching screen still works.
+
 ## Question counters
 
 Every question keeps three counters, shown on the `/stats` page:

@@ -12,6 +12,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
     "better-sqlite3": "^12.11.1",
     "nuxt": "^4.4.8",
     "vue": "^3.5.0",

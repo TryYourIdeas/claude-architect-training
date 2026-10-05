@@ -130,6 +130,13 @@ function selectionLabel(keys: string[]) {
         </div>
       </section>
 
+      <CoachChat
+        v-if="current"
+        :session-id="id"
+        :question-id="current.id"
+        :answered="!!feedback"
+      />
+
       <p v-if="actionError" class="alert" role="alert">{{ actionError }}</p>
     </template>
   </div>
