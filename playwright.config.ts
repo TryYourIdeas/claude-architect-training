@@ -11,6 +11,7 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: true,
-    env: { DB_PATH: './data/e2e.db' },
+    // The chat test expects the assistant to be unconfigured, so the key is blanked for the run.
+    env: { DB_PATH: './data/e2e.db', ANTHROPIC_API_KEY: '' },
   },
 })
