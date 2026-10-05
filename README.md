@@ -46,6 +46,10 @@ Configure it in `.env`:
 | `ANTHROPIC_MODEL` | Model id, for example `claude-sonnet-5`. |
 | `ANTHROPIC_BASE_URL` | Optional API endpoint. Leave empty for the default. |
 
+The server reads `.env` from the project root at startup, so `npm run dev`, `npm run preview` and
+`node .output/server/index.mjs` all pick up the same values. Variables already set in the shell are
+not overridden.
+
 Behaviour:
 
 - Before a learner checks their answer, the assistant is not given the correct answer or the

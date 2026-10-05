@@ -30,11 +30,12 @@ export interface ClaudeConfig {
 export function readClaudeConfig(env: NodeJS.ProcessEnv = process.env): ClaudeConfig {
   const apiKey = env.ANTHROPIC_API_KEY?.trim()
   const model = env.ANTHROPIC_MODEL?.trim()
-  if (!apiKey || !model) {
-    throw new ExamError(503, 'The chat assistant is not configured. Set ANTHROPIC_API_KEY and ANTHROPIC_MODEL.')
+  const missing = [!apiKey && 'ANTHROPIC_API_KEY', !model && 'ANTHROPIC_MODEL'].filter(Boolean)
+  if (missing.length) {
+    throw new ExamError(503, `The chat assistant is not configured. Missing: ${missing.join(', ')}.`)
   }
   const baseURL = env.ANTHROPIC_BASE_URL?.trim() || undefined
-  return { apiKey, model, baseURL }
+  return { apiKey: apiKey!, model: model!, baseURL }
 }
 
 /**
