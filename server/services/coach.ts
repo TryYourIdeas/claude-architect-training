@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { assembleCoachSession, type Question, type Rng } from '~~/shared/assembly'
 import { COACH, DOMAINS, isCorrectSelection } from '~~/shared/exam'
+import { loadStatMap, recordAnswer, recordPresentation } from './stats'
 import type { Db } from '../utils/db'
 import { answersFor, buildReport, ExamError, getTestRow, itemsFor, loadQuestions, type PublicItem, type Report, scoreTest } from './exam'
 
@@ -51,7 +52,8 @@ export function createCoachSession(
     throw new ExamError(400, 'domain must be 1–5 or null for all domains')
   }
 
-  const items = assembleCoachSession(loadQuestions(db), rng, size, options.domain)
+  const stats = loadStatMap(db)
+  const items = assembleCoachSession(loadQuestions(db), rng, size, options.domain, id => stats.get(id))
   if (items.length === 0) throw new ExamError(400, 'No questions available for that domain')
 
   const id = randomUUID()
@@ -70,6 +72,8 @@ export function getCoachView(db: Db, id: string): CoachView {
   const answers = answersFor(db, id)
   const index = items.findIndex(q => !(q.id in answers))
   const next = index === -1 ? null : items[index]!
+
+  if (next && row.finished_at === null) recordPresentation(db, id, next.id)
 
   return {
     id,
@@ -120,11 +124,15 @@ export function answerCoachQuestion(
     throw new ExamError(400, `Select exactly ${current.selectCount} option(s)`)
   }
 
-  db.prepare('INSERT INTO test_answers (test_id, question_id, selected, updated_at) VALUES (?, ?, ?, ?)')
-    .run(id, questionId, JSON.stringify(unique), now)
-
+  const isCorrect = isCorrectSelection(current.correct, unique)
   const remaining = items.length - Object.keys(answers).length - 1
-  if (remaining === 0) scoreTest(db, id, now)
+
+  db.transaction(() => {
+    db.prepare('INSERT INTO test_answers (test_id, question_id, selected, updated_at) VALUES (?, ?, ?, ?)')
+      .run(id, questionId, JSON.stringify(unique), now)
+    recordAnswer(db, questionId, isCorrect)
+    if (remaining === 0) scoreTest(db, id, now)
+  })()
 
   return toFeedback(current, unique, items.indexOf(current) + 1)
 }

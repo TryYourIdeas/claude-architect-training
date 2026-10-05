@@ -2,6 +2,9 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: 'e2e',
+  // All specs share one SQLite database, so they run one at a time to keep counters deterministic.
+  workers: 1,
+  fullyParallel: false,
   use: { baseURL: 'http://localhost:3000', trace: 'retain-on-failure' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {

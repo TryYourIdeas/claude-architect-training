@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Per-question counters (Shown, Right, Wrong) with the clearing rules, persisted in SQLite and shown on `/stats`.
+- Coaching selects by highest Wrong count, then least Shown, within each domain's quota.
+
 - Coaching mode: one question at a time, balanced across domains or focused on one, with immediate
   feedback (verdict, correct answer, explanation) locked in per question.
 - Database migration that rebuilds the `tests` table to allow the `coaching` mode.
