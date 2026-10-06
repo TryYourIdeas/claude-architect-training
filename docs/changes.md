@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fixed the chat sometimes returning "The assistant returned an empty reply". After the documentation lookups were used up, the model could end its turn with only a thinking block. The final call now asks explicitly for a plain-text answer, lookups are limited to one search and two fetches, the output budget is 4000 tokens, and a turn with no text returns a friendly message instead of an error.
+
 - Answer options are shuffled per attempt and relabelled A, B, C…, in the exam, coaching and chat. The order is stored with each item, so reloads are stable.
 - Recent attempts on the home page show the five most recent.
 - Answer options are shuffled so correct answers are spread across A–D (B was correct for 133 of 152 single-answer questions). The database re-syncs the bank on every open, so existing databases pick up the change.
