@@ -158,10 +158,13 @@ describe('askAboutQuestion', () => {
     error.mockRestore()
   })
 
-  it('rejects an empty reply from Claude', async () => {
-    const { client } = fakeClient({ content: [] })
-    await expect(askAboutQuestion(db, sessionId, questionId, [{ role: 'user', content: 'x' }], ENV, client))
-      .rejects.toMatchObject({ statusCode: 502 })
+  it('returns a friendly message, not an error, when Claude sends no text', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const { client } = fakeClient({ stop_reason: 'max_tokens', content: [{ type: 'thinking', thinking: '...' }] })
+    const { reply } = await askAboutQuestion(db, sessionId, questionId, [{ role: 'user', content: 'x' }], ENV, client)
+    expect(reply).toMatch(/could not put together an answer/)
+    expect(error).toHaveBeenCalled()
+    error.mockRestore()
   })
 })
 
@@ -228,7 +231,12 @@ describe('docs tool loop', () => {
     const { reply } = await askAboutQuestion(db, sessionId, questionId, [{ role: 'user', content: 'x' }], ENV, { messages: { create } } as never)
     expect(reply).toBe('Final answer.')
     expect(create).toHaveBeenCalledTimes(CHAT.maxToolRounds + 1)
-    expect(create.mock.calls.at(-1)![0].tools).toBeUndefined()
+    const finalCall = create.mock.calls.at(-1)![0]
+    expect(finalCall.tool_choice).toEqual({ type: 'none' })
+    // The closing instruction asks for a plain-text answer after the tool results.
+    const lastContent = finalCall.messages.at(-1).content
+    expect(lastContent.at(-1)).toMatchObject({ type: 'text', text: expect.stringMatching(/Answer the learner now/) })
+    expect(lastContent[0]).toMatchObject({ type: 'tool_result' })
   })
 })
 

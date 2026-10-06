@@ -8,7 +8,8 @@ import { DOC_TOOLS, runDocTool } from './claude-docs'
 export const CHAT = {
   maxMessageChars: 2000,
   maxHistoryTurns: 12,
-  maxTokens: 800,
+  /** Output budget per request. The model may spend part of it on thinking before it writes text. */
+  maxTokens: 4000,
   /** Tool-use rounds allowed per reply before the assistant must answer. */
   maxToolRounds: 4,
 } as const
@@ -54,7 +55,8 @@ export function buildSystemPrompt(question: Question, revealed: boolean): string
     'You are a patient tutor helping a learner prepare for the Claude Certified Architect – Foundations exam.',
     `Focus on the question below (${domain}, task ${question.taskStatement}) and the related topics of the Claude Certified Architect exam: the Claude API, the Claude Agent SDK, Claude Code and the Model Context Protocol. Politely decline requests that are unrelated to these.`,
     'Explain concepts, clarify wording and discuss trade-offs. Keep answers focused and under about 200 words.',
-    'Before answering a factual question about Claude, the Claude API or Claude Code, use search_docs and fetch_docs to check the official documentation, and name the page you relied on.',
+    'Before answering a factual question about Claude, the Claude API or Claude Code, check the official documentation with search_docs and fetch_docs, and name the page you relied on.',
+    'Keep lookups to a minimum: one search and at most two page fetches, then write your answer. Answer directly from the question when no lookup is needed.',
     '',
     `Question (${question.selectCount === 1 ? 'one answer' : `${question.selectCount} answers`}):`,
     question.stem,
@@ -105,7 +107,10 @@ function replyText(content: Anthropic.ContentBlock[]): string {
     .map(block => block.text)
     .join('\n')
     .trim()
-  if (!reply) throw new ExamError(502, 'The assistant returned an empty reply')
+  if (!reply) {
+    console.error('[coach-chat] reply had no text block', { blocks: content.map(b => b.type) })
+    return 'I could not put together an answer to that. Please try asking again, perhaps more briefly.'
+  }
   return reply
 }
 
@@ -157,7 +162,26 @@ export async function askAboutQuestion(
     }
 
     // Tool budget spent: ask for a final answer without tools.
-    const final = await api.messages.create({ model: config.model, max_tokens: CHAT.maxTokens, system, messages: turns })
+    // The tool definitions stay in the request because the history contains tool calls. Tools are
+    // disabled and the learner-facing answer is requested explicitly: without that instruction the
+    // model can spend the turn planning another lookup and return no text.
+    const last = turns[turns.length - 1]!
+    const closing: Anthropic.TextBlockParam = {
+      type: 'text',
+      text: 'You have used your lookups. Answer the learner now in plain text, using what you found. Do not call any more tools.',
+    }
+    const finalTurns: Anthropic.MessageParam[] = [
+      ...turns.slice(0, -1),
+      { role: 'user', content: [...(Array.isArray(last.content) ? last.content : [{ type: 'text' as const, text: String(last.content) }]), closing] },
+    ]
+    const final = await api.messages.create({
+      model: config.model,
+      max_tokens: CHAT.maxTokens,
+      system,
+      messages: finalTurns,
+      tools: DOC_TOOLS,
+      tool_choice: { type: 'none' },
+    })
     return { reply: replyText(final.content) }
   }
   catch (err) {
