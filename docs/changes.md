@@ -4,6 +4,7 @@
 
 - Answer options are shuffled per attempt and relabelled A, B, C…, in the exam, coaching and chat. The order is stored with each item, so reloads are stable.
 - Recent attempts on the home page show the five most recent.
+- Answer options are shuffled so correct answers are spread across A–D (B was correct for 133 of 152 single-answer questions). The database re-syncs the bank on every open, so existing databases pick up the change.
 
 - Chat assistant can search and read the Claude Platform and Claude Code documentation (`search_docs`, `fetch_docs`), limited to a committed index of 974 pages generated from the published `llms.txt` files.
 - The production server now loads `.env` at startup, so the chat settings work with `npm run preview` and the built server. The chat error names any missing variable.
