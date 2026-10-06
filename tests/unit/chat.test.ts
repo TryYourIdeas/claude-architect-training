@@ -66,8 +66,10 @@ describe('buildSystemPrompt', () => {
     expect(prompt).toContain('Hooks are deterministic.')
   })
 
-  it('keeps the assistant on the question topic', () => {
-    expect(buildSystemPrompt(question, false)).toContain('Stay on the topic')
+  it('keeps the assistant on the exam topics, including Claude Code and the docs', () => {
+    const prompt = buildSystemPrompt(question, false)
+    expect(prompt).toContain('Claude Code')
+    expect(prompt).toContain('Politely decline')
   })
 })
 
@@ -160,6 +162,73 @@ describe('askAboutQuestion', () => {
     const { client } = fakeClient({ content: [] })
     await expect(askAboutQuestion(db, sessionId, questionId, [{ role: 'user', content: 'x' }], ENV, client))
       .rejects.toMatchObject({ statusCode: 502 })
+  })
+})
+
+describe('docs tool loop', () => {
+  let db: Db
+  let sessionId: string
+  let questionId: string
+  beforeEach(() => {
+    db = openDatabase(':memory:', QUESTIONS)
+    sessionId = createCoachSession(db, { domain: null, size: 2 }, 0, rng)
+    questionId = getCoachView(db, sessionId).current!.id
+  })
+  afterEach(() => {
+    db.close()
+    vi.unstubAllGlobals()
+  })
+
+  it('runs a requested docs tool and answers with the result in context', async () => {
+    const fetchStub = vi.fn().mockResolvedValue(new Response('Hook docs text', { status: 200 }))
+    vi.stubGlobal('fetch', fetchStub)
+    const create = vi.fn()
+      .mockResolvedValueOnce({
+        stop_reason: 'tool_use',
+        content: [{ type: 'tool_use', id: 'tu_1', name: 'fetch_docs', input: { url: 'https://code.claude.com/docs/en/hooks.md' } }],
+      })
+      .mockResolvedValueOnce({ stop_reason: 'end_turn', content: [{ type: 'text', text: 'Hooks run deterministically.' }] })
+
+    const { reply } = await askAboutQuestion(db, sessionId, questionId, [{ role: 'user', content: 'What are hooks?' }], ENV, { messages: { create } } as never)
+
+    expect(reply).toBe('Hooks run deterministically.')
+    expect(fetchStub).toHaveBeenCalledWith('https://code.claude.com/docs/en/hooks.md', expect.anything())
+    const secondCall = create.mock.calls[1]![0]
+    const toolResult = secondCall.messages.at(-1).content[0]
+    expect(toolResult).toMatchObject({ type: 'tool_result', tool_use_id: 'tu_1' })
+    expect(toolResult.content).toContain('Hook docs text')
+    expect(create.mock.calls[0]![0].tools.map((t: { name: string }) => t.name)).toEqual(['search_docs', 'fetch_docs'])
+  })
+
+  it('tells the model when it asks for a URL outside the index, and does not fetch it', async () => {
+    const fetchStub = vi.fn()
+    vi.stubGlobal('fetch', fetchStub)
+    const create = vi.fn()
+      .mockResolvedValueOnce({
+        stop_reason: 'tool_use',
+        content: [{ type: 'tool_use', id: 'tu_2', name: 'fetch_docs', input: { url: 'https://evil.example/x.md' } }],
+      })
+      .mockResolvedValueOnce({ stop_reason: 'end_turn', content: [{ type: 'text', text: 'I could not verify that.' }] })
+
+    await askAboutQuestion(db, sessionId, questionId, [{ role: 'user', content: 'x' }], ENV, { messages: { create } } as never)
+    expect(fetchStub).not.toHaveBeenCalled()
+    expect(create.mock.calls[1]![0].messages.at(-1).content[0].content).toMatch(/not in the documentation index/)
+  })
+
+  it('answers without tools once the tool budget is spent', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    const toolTurn = {
+      stop_reason: 'tool_use',
+      content: [{ type: 'tool_use', id: 'tu_x', name: 'search_docs', input: { query: 'hooks' } }],
+    }
+    const create = vi.fn()
+      .mockResolvedValueOnce(toolTurn).mockResolvedValueOnce(toolTurn).mockResolvedValueOnce(toolTurn).mockResolvedValueOnce(toolTurn)
+      .mockResolvedValueOnce({ stop_reason: 'end_turn', content: [{ type: 'text', text: 'Final answer.' }] })
+
+    const { reply } = await askAboutQuestion(db, sessionId, questionId, [{ role: 'user', content: 'x' }], ENV, { messages: { create } } as never)
+    expect(reply).toBe('Final answer.')
+    expect(create).toHaveBeenCalledTimes(CHAT.maxToolRounds + 1)
+    expect(create.mock.calls.at(-1)![0].tools).toBeUndefined()
   })
 })
 

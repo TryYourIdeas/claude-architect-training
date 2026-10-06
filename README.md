@@ -57,6 +57,13 @@ Behaviour:
   included so the learner can ask why each option is right or wrong.
 - Each question has its own conversation. Moving to the next question starts a fresh one.
 - Only the last 12 messages are sent to Claude, and each message is limited to 2000 characters.
+- **Documentation tools.** The assistant can search and read the official Claude documentation before
+  answering. `search_docs` searches an index of 974 English pages from `platform.claude.com/docs` and
+  `code.claude.com/docs`. `fetch_docs` reads one page, but only if its URL is in the index, and it does not
+  follow redirects. Pages are cached for 15 minutes and truncated to 12,000 characters. The assistant
+  names the page it relied on.
+- Refresh the index with `node scripts/build-docs-index.mjs`. It reads the `llms.txt` files published by
+  both sites and writes `data/claude-docs-index.json`, which is committed.
 - If the variables are missing, the chat shows "The chat assistant is not configured" and the rest
   of the coaching screen still works.
 

@@ -3,11 +3,14 @@ import type { Question } from '~~/shared/assembly'
 import { DOMAINS } from '~~/shared/exam'
 import type { Db } from '../utils/db'
 import { answersFor, ExamError, getTestRow, itemsFor } from './exam'
+import { DOC_TOOLS, runDocTool } from './claude-docs'
 
 export const CHAT = {
   maxMessageChars: 2000,
   maxHistoryTurns: 12,
   maxTokens: 800,
+  /** Tool-use rounds allowed per reply before the assistant must answer. */
+  maxToolRounds: 4,
 } as const
 
 export interface ChatMessage {
@@ -49,8 +52,9 @@ export function buildSystemPrompt(question: Question, revealed: boolean): string
 
   const lines = [
     'You are a patient tutor helping a learner prepare for the Claude Certified Architect – Foundations exam.',
-    `Stay on the topic of the question below (${domain}, task ${question.taskStatement}). Politely decline unrelated requests.`,
+    `Focus on the question below (${domain}, task ${question.taskStatement}) and the related topics of the Claude Certified Architect exam: the Claude API, the Claude Agent SDK, Claude Code and the Model Context Protocol. Politely decline requests that are unrelated to these.`,
     'Explain concepts, clarify wording and discuss trade-offs. Keep answers focused and under about 200 words.',
+    'Before answering a factual question about Claude, the Claude API or Claude Code, use search_docs and fetch_docs to check the official documentation, and name the page you relied on.',
     '',
     `Question (${question.selectCount === 1 ? 'one answer' : `${question.selectCount} answers`}):`,
     question.stem,
@@ -95,7 +99,17 @@ export function validateMessages(messages: unknown): ChatMessage[] {
   return clean.slice(-CHAT.maxHistoryTurns)
 }
 
-/** Sends one chat turn to Claude about a question in a coaching session. */
+function replyText(content: Anthropic.ContentBlock[]): string {
+  const reply = content
+    .filter((block): block is Anthropic.TextBlock => block.type === 'text')
+    .map(block => block.text)
+    .join('\n')
+    .trim()
+  if (!reply) throw new ExamError(502, 'The assistant returned an empty reply')
+  return reply
+}
+
+/** Sends one chat turn to Claude about a question in a coaching session, using the docs tools when needed. */
 export async function askAboutQuestion(
   db: Db,
   sessionId: string,
@@ -118,19 +132,32 @@ export async function askAboutQuestion(
   const api = client ?? new Anthropic({ apiKey: config.apiKey, baseURL: config.baseURL })
 
   try {
-    const response = await api.messages.create({
-      model: config.model,
-      max_tokens: CHAT.maxTokens,
-      system,
-      messages: conversation,
-    })
-    const reply = response.content
-      .filter(block => block.type === 'text')
-      .map(block => block.text)
-      .join('\n')
-      .trim()
-    if (!reply) throw new ExamError(502, 'The assistant returned an empty reply')
-    return { reply }
+    const turns: Anthropic.MessageParam[] = conversation.map(m => ({ role: m.role, content: m.content }))
+    for (let round = 0; round < CHAT.maxToolRounds; round++) {
+      const response = await api.messages.create({
+        model: config.model,
+        max_tokens: CHAT.maxTokens,
+        system,
+        messages: turns,
+        tools: DOC_TOOLS,
+      })
+
+      if (response.stop_reason !== 'tool_use') return { reply: replyText(response.content) }
+
+      // Keep the assistant's tool request in the conversation, then answer each tool call.
+      turns.push({ role: 'assistant', content: response.content })
+      const results: Anthropic.ToolResultBlockParam[] = []
+      for (const block of response.content) {
+        if (block.type !== 'tool_use') continue
+        const input = (block.input ?? {}) as Record<string, unknown>
+        results.push({ type: 'tool_result', tool_use_id: block.id, content: await runDocTool(block.name, input) })
+      }
+      turns.push({ role: 'user', content: results })
+    }
+
+    // Tool budget spent: ask for a final answer without tools.
+    const final = await api.messages.create({ model: config.model, max_tokens: CHAT.maxTokens, system, messages: turns })
+    return { reply: replyText(final.content) }
   }
   catch (err) {
     if (err instanceof ExamError) throw err
