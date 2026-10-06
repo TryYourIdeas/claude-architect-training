@@ -40,6 +40,8 @@ describe('readClaudeConfig', () => {
   it('fails with 503 when the key or model is missing, without revealing secrets', () => {
     expect(() => readClaudeConfig({ ANTHROPIC_MODEL: 'm' })).toThrow(ExamError)
     expect(() => readClaudeConfig({ ANTHROPIC_API_KEY: 'k' })).toThrow(/not configured/)
+    expect(() => readClaudeConfig({ ANTHROPIC_API_KEY: 'k' })).toThrow(/Missing: ANTHROPIC_MODEL/)
+    expect(() => readClaudeConfig({ ANTHROPIC_MODEL: 'm' })).toThrow(/Missing: ANTHROPIC_API_KEY/)
     try {
       readClaudeConfig({})
     }
