@@ -5,6 +5,7 @@ import { openDatabase, type Db } from '~~/server/utils/db'
 import { answerCoachQuestion, createCoachSession, getCoachView } from '~~/server/services/coach'
 import { applyAnswer, listQuestionStats, loadStatMap, recordAnswer, recordPresentation } from '~~/server/services/stats'
 import { assembleCoachSession, prioritize, type Question } from '~~/shared/assembly'
+import { presentedKey } from '../helpers/presented'
 import { CLEAR_WRONG_AFTER_RIGHT } from '~~/shared/exam'
 
 const QUESTIONS = resolve(__dirname, '../../data/questions.json')
@@ -94,8 +95,7 @@ describe('counters in the database', () => {
   it('updates right and wrong counters when answers are checked', () => {
     const id = createCoachSession(db, { domain: null, size: 2 }, 0, rng)
     const q = getCoachView(db, id).current!
-    const correct = (db.prepare('SELECT correct FROM questions WHERE id = ?').get(q.id) as { correct: string })
-    answerCoachQuestion(db, id, q.id, JSON.parse(correct.correct), 1)
+    answerCoachQuestion(db, id, q.id, presentedKey(db, id).get(q.id)!.correct, 1)
 
     const row = listQuestionStats(db).find(r => r.id === q.id)!
     expect(row).toMatchObject({ shown: 1, right: 1, wrong: 0 })

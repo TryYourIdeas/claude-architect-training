@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { openDatabase, type Db } from '~~/server/utils/db'
 import { buildReport, createTest, ExamError, getTestView, saveAnswer, submitTest } from '~~/server/services/exam'
 import { EXAM } from '~~/shared/exam'
+import { presentedKey } from '../helpers/presented'
 
 const QUESTIONS = resolve(__dirname, '../../data/questions.json')
 const MINUTE = 60_000
@@ -21,10 +22,9 @@ beforeEach(() => {
 afterEach(() => db.close())
 
 function answerKey(testId: string) {
-  // Answer every item correctly using the bank's own key, so we can test scoring end to end.
+  // Answer every item correctly, using the letters this attempt shows, to test scoring end to end.
   const view = getTestView(db, testId, 0)
-  const rows = db.prepare('SELECT id, correct FROM questions').all() as { id: string, correct: string }[]
-  const key = new Map(rows.map(r => [r.id, JSON.parse(r.correct) as string[]]))
+  const key = new Map([...presentedKey(db, testId)].map(([qid, k]) => [qid, k.correct]))
   return { view, key }
 }
 

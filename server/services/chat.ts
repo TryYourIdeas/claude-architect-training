@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import type { Question } from '~~/shared/assembly'
 import { DOMAINS } from '~~/shared/exam'
 import type { Db } from '../utils/db'
-import { answersFor, ExamError, getTestRow, itemsFor } from './exam'
+import { answersFor, ExamError, getTestRow, orderedItemsFor } from './exam'
 import { DOC_TOOLS, runDocTool } from './claude-docs'
 
 export const CHAT = {
@@ -121,12 +121,13 @@ export async function askAboutQuestion(
   const row = getTestRow(db, sessionId)
   if (row.mode !== 'coaching') throw new ExamError(404, 'Coaching session not found')
 
-  const item = itemsFor(db, sessionId).find(q => q.id === questionId)
+  // Use the question as the learner sees it, so letters in the chat match the screen.
+  const item = orderedItemsFor(db, sessionId).find(i => i.stored.id === questionId)
   if (!item) throw new ExamError(400, 'Question is not part of this session')
 
   const conversation = validateMessages(messages)
   const revealed = questionId in answersFor(db, sessionId)
-  const system = buildSystemPrompt(item, revealed)
+  const system = buildSystemPrompt(item.presented, revealed)
 
   const config = readClaudeConfig(env)
   const api = client ?? new Anthropic({ apiKey: config.apiKey, baseURL: config.baseURL })

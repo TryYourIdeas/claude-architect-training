@@ -33,9 +33,10 @@ CREATE TABLE IF NOT EXISTS tests (
 );
 
 CREATE TABLE IF NOT EXISTS test_items (
-  test_id     TEXT NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
-  position    INTEGER NOT NULL,
-  question_id TEXT NOT NULL REFERENCES questions(id),
+  test_id      TEXT NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
+  position     INTEGER NOT NULL,
+  question_id  TEXT NOT NULL REFERENCES questions(id),
+  option_order TEXT,                  -- JSON: stored option keys in the order shown, e.g. ["C","A","D","B"]; null = stored order
   PRIMARY KEY (test_id, position)
 );
 
@@ -120,6 +121,12 @@ export function seedQuestions(db: Db, file: string): number {
   return replaceAll(questions)
 }
 
+/** Adds a column to an existing table when an earlier version of the schema lacks it. */
+function ensureColumn(db: Db, table: string, column: string, type: string): void {
+  const columns = (db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[]).map(c => c.name)
+  if (!columns.includes(column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`)
+}
+
 /**
  * Brings databases created by earlier versions up to date. Earlier builds restricted
  * tests.mode with a CHECK constraint, which SQLite cannot alter, so the table is rebuilt.
@@ -162,6 +169,7 @@ export function openDatabase(path: string, questionsPath: string): Db {
   db.pragma('foreign_keys = ON')
   db.exec(SCHEMA)
   migrate(db)
+  ensureColumn(db, 'test_items', 'option_order', 'TEXT')
 
   // Upsert on every open so edits to questions.json reach existing databases.
   // History is kept: attempts reference questions by id, which does not change.

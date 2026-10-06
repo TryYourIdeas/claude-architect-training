@@ -67,6 +67,13 @@ Behaviour:
 - If the variables are missing, the chat shows "The chat assistant is not configured" and the rest
   of the coaching screen still works.
 
+## Option order
+
+Each attempt shows the answer options in a random order and relabels them A, B, C…, so the correct
+letter is not the same from one attempt to the next. The order is stored per item, so reloading a
+question shows the same order. Answers are stored in the question bank's keys and converted when
+they are shown. The chat assistant sees the question in the order the learner sees it.
+
 ## Question counters
 
 Every question keeps three counters, shown on the `/stats` page:

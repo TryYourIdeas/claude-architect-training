@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { assembleDiagnostic, assemblePractice, type Question, type Rng } from '~~/shared/assembly'
+import { identityOrder, presentQuestion, randomOrder, toDisplayedKeys, toStoredKeys } from '~~/shared/presentation'
 import { DOMAINS, EXAM, isCorrectSelection, isPass, SCALE_NOTE, SCENARIOS, scaleScore } from '~~/shared/exam'
 import type { Db } from '../utils/db'
 import { rowToQuestion } from '../utils/db'
@@ -102,9 +103,44 @@ export function itemsFor(db: Db, id: string): Question[] {
   `).all(id) as Parameters<typeof rowToQuestion>[0][]).map(rowToQuestion)
 }
 
+/** Answers keyed by question id, in stored keys (A–E as written in the question bank). */
 export function answersFor(db: Db, id: string): Record<string, string[]> {
   const rows = db.prepare('SELECT question_id, selected FROM test_answers WHERE test_id = ?').all(id) as { question_id: string, selected: string }[]
   return Object.fromEntries(rows.map(r => [r.question_id, JSON.parse(r.selected) as string[]]))
+}
+
+export interface OrderedItem {
+  /** The question as stored in the bank. */
+  stored: Question
+  /** Stored option keys in the order this attempt shows them. */
+  order: string[]
+  /** The question as the learner sees it: options relabelled A, B, C… in `order`. */
+  presented: Question
+}
+
+/** Items of an attempt in position order, with the option order each one was shown in. */
+export function orderedItemsFor(db: Db, id: string): OrderedItem[] {
+  const rows = db.prepare(`
+    SELECT q.*, ti.option_order AS option_order FROM test_items ti JOIN questions q ON q.id = ti.question_id
+    WHERE ti.test_id = ? ORDER BY ti.position
+  `).all(id) as (Parameters<typeof rowToQuestion>[0] & { option_order: string | null })[]
+
+  return rows.map((r) => {
+    const stored = rowToQuestion(r)
+    const order = r.option_order ? (JSON.parse(r.option_order) as string[]) : identityOrder(stored)
+    return { stored, order, presented: presentQuestion(stored, order) }
+  })
+}
+
+/** Answers keyed by question id, in the letters the learner saw. */
+export function displayedAnswersFor(db: Db, id: string): Record<string, string[]> {
+  const stored = answersFor(db, id)
+  const out: Record<string, string[]> = {}
+  for (const item of orderedItemsFor(db, id)) {
+    const answer = stored[item.stored.id]
+    if (answer) out[item.stored.id] = toDisplayedKeys(answer, item.order)
+  }
+  return out
 }
 
 export function createTest(db: Db, mode: Exclude<TestMode, 'coaching'>, now = Date.now(), rng: Rng = Math.random): string {
@@ -129,11 +165,11 @@ export function createTest(db: Db, mode: Exclude<TestMode, 'coaching'>, now = Da
   const insertTest = db.prepare(`
     INSERT INTO tests (id, mode, scenarios, created_at, deadline_at) VALUES (?, ?, ?, ?, ?)
   `)
-  const insertItem = db.prepare('INSERT INTO test_items (test_id, position, question_id) VALUES (?, ?, ?)')
+  const insertItem = db.prepare('INSERT INTO test_items (test_id, position, question_id, option_order) VALUES (?, ?, ?, ?)')
 
   db.transaction(() => {
     insertTest.run(id, mode, scenarios ? JSON.stringify(scenarios) : null, now, deadlineAt)
-    items.forEach((q, i) => insertItem.run(id, i + 1, q.id))
+    items.forEach((q, i) => insertItem.run(id, i + 1, q.id, JSON.stringify(randomOrder(q, rng))))
   })()
 
   return id
@@ -166,7 +202,7 @@ function expireIfNeeded(db: Db, row: TestRow, now: number): TestRow {
 
 export function getTestView(db: Db, id: string, now = Date.now()): TestView {
   const row = expireIfNeeded(db, getTestRow(db, id), now)
-  const items = itemsFor(db, id)
+  const items = orderedItemsFor(db, id)
 
   return {
     id: row.id,
@@ -177,7 +213,7 @@ export function getTestView(db: Db, id: string, now = Date.now()): TestView {
     remainingSeconds: row.deadline_at !== null && row.finished_at === null
       ? Math.max(0, Math.floor((row.deadline_at - now) / 1000))
       : null,
-    items: items.map((q, i) => ({
+    items: items.map(({ presented: q }, i) => ({
       position: i + 1,
       id: q.id,
       scenario: q.scenario,
@@ -187,7 +223,7 @@ export function getTestView(db: Db, id: string, now = Date.now()): TestView {
       options: q.options,
       selectCount: q.selectCount,
     })),
-    answers: answersFor(db, id),
+    answers: displayedAnswersFor(db, id),
   }
 }
 
@@ -195,10 +231,11 @@ export function saveAnswer(db: Db, id: string, questionId: string, selected: str
   const row = expireIfNeeded(db, getTestRow(db, id), now)
   if (row.finished_at !== null) throw new ExamError(409, 'Test is already finished')
 
-  const items = itemsFor(db, id)
-  const question = items.find(q => q.id === questionId)
-  if (!question) throw new ExamError(400, 'Question is not part of this test')
+  const item = orderedItemsFor(db, id).find(i => i.stored.id === questionId)
+  if (!item) throw new ExamError(400, 'Question is not part of this test')
+  const { presented: question, order } = item
 
+  // The learner answers with the letters they see; store the original keys.
   const unique = [...new Set(selected)]
   const validKeys = new Set(question.options.map(o => o.key))
   if (unique.some(k => !validKeys.has(k))) throw new ExamError(400, 'Unknown option key')
@@ -209,7 +246,7 @@ export function saveAnswer(db: Db, id: string, questionId: string, selected: str
   db.prepare(`
     INSERT INTO test_answers (test_id, question_id, selected, updated_at) VALUES (?, ?, ?, ?)
     ON CONFLICT(test_id, question_id) DO UPDATE SET selected = excluded.selected, updated_at = excluded.updated_at
-  `).run(id, questionId, JSON.stringify(unique.sort()), now)
+  `).run(id, questionId, JSON.stringify(toStoredKeys(unique, order)), now)
 }
 
 export function submitTest(db: Db, id: string, now = Date.now()): Report {
@@ -222,11 +259,11 @@ export function buildReport(db: Db, id: string): Report {
   const row = getTestRow(db, id)
   if (row.finished_at === null) throw new ExamError(409, 'Test is not finished yet')
 
-  const items = itemsFor(db, id)
+  const items = orderedItemsFor(db, id)
   const answers = answersFor(db, id)
 
-  const reportItems: ReportItem[] = items.map((q, i) => {
-    const selected = answers[q.id] ?? []
+  const reportItems: ReportItem[] = items.map(({ stored, order, presented: q }, i) => {
+    const storedSelected = answers[stored.id] ?? []
     return {
       position: i + 1,
       id: q.id,
@@ -235,9 +272,9 @@ export function buildReport(db: Db, id: string): Report {
       stem: q.stem,
       options: q.options,
       selectCount: q.selectCount,
-      selected,
+      selected: toDisplayedKeys(storedSelected, order),
       correct: q.correct,
-      isCorrect: isCorrectSelection(q.correct, selected),
+      isCorrect: isCorrectSelection(stored.correct, storedSelected),
       explanation: q.explanation,
     }
   })
@@ -272,7 +309,7 @@ export function buildReport(db: Db, id: string): Report {
   }
 }
 
-export function listTests(db: Db, limit = 20): Array<{ id: string, mode: TestMode, createdAt: number, finished: boolean, scaledScore: number | null, passed: boolean | null }> {
+export function listTests(db: Db, limit = 5): Array<{ id: string, mode: TestMode, createdAt: number, finished: boolean, scaledScore: number | null, passed: boolean | null }> {
   const rows = db.prepare('SELECT * FROM tests ORDER BY created_at DESC LIMIT ?').all(limit) as TestRow[]
   return rows.map(r => ({
     id: r.id,
