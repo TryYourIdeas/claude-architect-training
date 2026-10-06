@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path'
 import Database from 'better-sqlite3'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { openDatabase, type Db } from '~~/server/utils/db'
+import { presentedKey, wrongSelection } from '../helpers/presented'
 import { answerCoachQuestion, createCoachSession, getCoachSummary, getCoachView } from '~~/server/services/coach'
 import { ExamError, getTestRow } from '~~/server/services/exam'
 import { COACH, DOMAINS } from '~~/shared/exam'
@@ -23,18 +24,12 @@ beforeEach(() => {
 })
 afterEach(() => db.close())
 
-function answerKey(): Map<string, string[]> {
-  const rows = db.prepare('SELECT id, correct FROM questions').all() as { id: string, correct: string }[]
-  return new Map(rows.map(r => [r.id, JSON.parse(r.correct) as string[]]))
+function answerKey(sessionId: string): Map<string, string[]> {
+  return new Map([...presentedKey(db, sessionId)].map(([qid, k]) => [qid, k.correct]))
 }
 
-/** A selection of the right size that is guaranteed to differ from the correct answer. */
-function wrongFor(questionId: string): string[] {
-  const row = db.prepare('SELECT options FROM questions WHERE id = ?').get(questionId) as { options: string }
-  const keys = (JSON.parse(row.options) as { key: string }[]).map(o => o.key)
-  const correct = answerKey().get(questionId)!
-  const wrongKey = keys.find(k => !correct.includes(k))!
-  return [wrongKey, ...correct.slice(1)].slice(0, correct.length)
+function wrongFor(sessionId: string, questionId: string): string[] {
+  return wrongSelection(db, sessionId, questionId)
 }
 
 describe('coaching session creation', () => {
@@ -68,7 +63,7 @@ describe('one question at a time with immediate feedback', () => {
   it('serves the next unanswered question only, and locks an answer once given', () => {
     const id = createCoachSession(db, { domain: null, size: 3 }, 0, rng)
     const first = getCoachView(db, id).current!
-    const key = answerKey().get(first.id)!
+    const key = answerKey(id).get(first.id)!
 
     const feedback = answerCoachQuestion(db, id, first.id, key, 1)
     expect(feedback.isCorrect).toBe(true)
@@ -87,13 +82,13 @@ describe('one question at a time with immediate feedback', () => {
   it('returns feedback marking an incorrect answer', () => {
     const id = createCoachSession(db, { domain: null, size: 1 }, 0, rng)
     const q = getCoachView(db, id).current!
-    const feedback = answerCoachQuestion(db, id, q.id, wrongFor(q.id), 1)
+    const feedback = answerCoachQuestion(db, id, q.id, wrongFor(id, q.id), 1)
     expect(feedback.isCorrect).toBe(false)
   })
 
   it('requires exactly selectCount options for multiple-response items', () => {
     const id = createCoachSession(db, { domain: null, size: 30 }, 0, rng)
-    const key = answerKey()
+    const key = answerKey(id)
     let step = 1
     // Answer single-response questions correctly until a multiple-response one is served.
     let current = getCoachView(db, id).current!
@@ -114,10 +109,10 @@ describe('one question at a time with immediate feedback', () => {
 
   it('completes the session after the final answer and produces a summary', () => {
     const id = createCoachSession(db, { domain: null, size: 4 }, 0, rng)
-    const key = answerKey()
+    const key = answerKey(id)
     for (let i = 0; i < 4; i++) {
       const q = getCoachView(db, id).current!
-      answerCoachQuestion(db, id, q.id, i === 0 ? wrongFor(q.id) : key.get(q.id)!, i + 1)
+      answerCoachQuestion(db, id, q.id, i === 0 ? wrongFor(id, q.id) : key.get(q.id)!, i + 1)
     }
 
     const view = getCoachView(db, id)

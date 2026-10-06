@@ -1,5 +1,5 @@
 import { getDb } from '../../utils/db'
-import { guard } from '../../utils/http'
 import { listTests } from '../../services/exam'
 
-export default defineEventHandler(() => guard(() => listTests(getDb())))
+// The home page shows the five most recent attempts.
+export default defineEventHandler(() => listTests(getDb(), 5))

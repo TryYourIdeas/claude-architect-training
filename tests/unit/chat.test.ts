@@ -5,6 +5,7 @@ import { answerCoachQuestion, createCoachSession, getCoachView } from '~~/server
 import { askAboutQuestion, buildSystemPrompt, CHAT, readClaudeConfig, validateMessages } from '~~/server/services/chat'
 import { ExamError } from '~~/server/services/exam'
 import type { Question } from '~~/shared/assembly'
+import { presentedKey } from '../helpers/presented'
 
 const QUESTIONS = resolve(__dirname, '../../data/questions.json')
 const ENV = { ANTHROPIC_API_KEY: 'test-key', ANTHROPIC_MODEL: 'claude-test-model' }
@@ -130,8 +131,7 @@ describe('askAboutQuestion', () => {
 
   it('sends the answer and explanation to Claude after the learner has answered', async () => {
     const q = getCoachView(db, sessionId).current!
-    const correct = (db.prepare('SELECT correct FROM questions WHERE id = ?').get(q.id) as { correct: string }).correct
-    answerCoachQuestion(db, sessionId, q.id, JSON.parse(correct), 1)
+    answerCoachQuestion(db, sessionId, q.id, presentedKey(db, sessionId).get(q.id)!.correct, 1)
 
     const { client, create } = fakeClient({ content: [{ type: 'text', text: 'ok' }] })
     await askAboutQuestion(db, sessionId, q.id, [{ role: 'user', content: 'Why?' }], ENV, client)
