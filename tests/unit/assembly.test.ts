@@ -51,6 +51,14 @@ describe('question bank', () => {
     }
   })
 
+  it('spreads single-answer keys across the options, so no letter stands out', () => {
+    const single = bank.filter(q => q.selectCount === 1)
+    for (const key of ['A', 'B', 'C', 'D']) {
+      const share = single.filter(q => q.correct[0] === key).length / single.length
+      expect(share, `answer key ${key}`).toBeLessThanOrEqual(0.4)
+    }
+  })
+
   it('never declares more correct answers than the selectCount allows', () => {
     const multi = bank.filter(q => q.selectCount > 1)
     expect(multi.length).toBeGreaterThan(0)

@@ -153,7 +153,7 @@ function migrate(db: Db): void {
   }
 }
 
-/** Opens (creating if needed) a database, applies the schema, and seeds the bank when empty. */
+/** Opens (creating if needed) a database, applies the schema, and syncs the question bank from the seed file. */
 export function openDatabase(path: string, questionsPath: string): Db {
   if (path !== ':memory:') mkdirSync(dirname(path), { recursive: true })
 
@@ -163,8 +163,9 @@ export function openDatabase(path: string, questionsPath: string): Db {
   db.exec(SCHEMA)
   migrate(db)
 
-  const count = (db.prepare('SELECT COUNT(*) AS n FROM questions').get() as { n: number }).n
-  if (count === 0) seedQuestions(db, questionsPath)
+  // Upsert on every open so edits to questions.json reach existing databases.
+  // History is kept: attempts reference questions by id, which does not change.
+  seedQuestions(db, questionsPath)
   return db
 }
 

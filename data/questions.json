@@ -8,7 +8,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Stop when the assistant's text contains a phrase like \"I'm done\"."
+        "text": "Run exactly five iterations and then stop, regardless of stop_reason."
       },
       {
         "key": "B",
@@ -16,7 +16,7 @@
       },
       {
         "key": "C",
-        "text": "Run exactly five iterations and then stop, regardless of stop_reason."
+        "text": "Stop when the assistant's text contains a phrase like \"I'm done\"."
       },
       {
         "key": "D",
@@ -38,23 +38,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Add a system prompt line saying the agent must verify identity first."
-      },
-      {
-        "key": "B",
         "text": "Add a programmatic prerequisite (for example a hook) that blocks process_refund until get_customer has returned a verified customer ID."
       },
       {
+        "key": "B",
+        "text": "Add a system prompt line saying the agent must verify identity first."
+      },
+      {
         "key": "C",
-        "text": "Add few-shot examples that show verification happening before refunds."
+        "text": "Set temperature to 0 so the model follows the order every time."
       },
       {
         "key": "D",
-        "text": "Set temperature to 0 so the model follows the order every time."
+        "text": "Add few-shot examples that show verification happening before refunds."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "When a business rule requires guaranteed compliance, enforcement must be programmatic; prompt instructions have a non-zero failure rate."
@@ -68,11 +68,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Customer ID"
+        "text": "Recommended action"
       },
       {
         "key": "B",
-        "text": "Root cause analysis"
+        "text": "Customer ID"
       },
       {
         "key": "C",
@@ -80,7 +80,7 @@
       },
       {
         "key": "D",
-        "text": "Recommended action"
+        "text": "Root cause analysis"
       },
       {
         "key": "E",
@@ -104,23 +104,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Add 5-8 few-shot examples to the system prompt showing correct routing."
-      },
-      {
-        "key": "B",
         "text": "Rewrite each tool description to state its purpose, input formats, example queries, edge cases and when to use it versus the other tool."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Add a routing layer that pre-selects a tool from keywords before each turn."
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Merge both tools into one lookup_entity tool that accepts any identifier."
+      },
+      {
+        "key": "D",
+        "text": "Add 5-8 few-shot examples to the system prompt showing correct routing."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Tool descriptions are the primary selection mechanism, so a low-effort, high-leverage fix is to make them differentiate clearly."
@@ -134,7 +134,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Return the string \"Operation failed\"."
+        "text": "Throw an exception that terminates the session."
       },
       {
         "key": "B",
@@ -142,11 +142,11 @@
       },
       {
         "key": "C",
-        "text": "Throw an exception that terminates the session."
+        "text": "Return success with an empty result so the conversation continues smoothly."
       },
       {
         "key": "D",
-        "text": "Return success with an empty result so the conversation continues smoothly."
+        "text": "Return the string \"Operation failed\"."
       }
     ],
     "correct": [
@@ -194,23 +194,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Try to resolve the issue for three more turns first."
-      },
-      {
-        "key": "B",
         "text": "Escalate immediately, honoring the explicit request."
       },
       {
+        "key": "B",
+        "text": "Ask the model to self-report a confidence score and escalate below a threshold."
+      },
+      {
         "key": "C",
-        "text": "Escalate only if sentiment analysis scores the message above 0.8."
+        "text": "Try to resolve the issue for three more turns first."
       },
       {
         "key": "D",
-        "text": "Ask the model to self-report a confidence score and escalate below a threshold."
+        "text": "Escalate only if sentiment analysis scores the message above 0.8."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "An explicit request for a human is an escalation trigger, and sentiment or self-reported confidence are unreliable proxies."
@@ -224,7 +224,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Deny the request, since anything not explicitly allowed is refused."
+        "text": "Escalate, treating this as a policy gap."
       },
       {
         "key": "B",
@@ -232,15 +232,15 @@
       },
       {
         "key": "C",
-        "text": "Escalate, treating this as a policy gap."
+        "text": "Tell the customer to wait while the agent searches for a loophole."
       },
       {
         "key": "D",
-        "text": "Tell the customer to wait while the agent searches for a loophole."
+        "text": "Deny the request, since anything not explicitly allowed is refused."
       }
     ],
     "correct": [
-      "C"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "When policy is silent or ambiguous on the specific request, that is a policy gap and an escalation trigger."
@@ -254,23 +254,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Pick the most recently created account."
+        "text": "Pick the account whose email domain matches the chat platform."
       },
       {
         "key": "B",
-        "text": "Pick the first result returned."
-      },
-      {
-        "key": "C",
         "text": "Ask the customer for additional identifiers before acting."
       },
       {
+        "key": "C",
+        "text": "Pick the most recently created account."
+      },
+      {
         "key": "D",
-        "text": "Pick the account whose email domain matches the chat platform."
+        "text": "Pick the first result returned."
       }
     ],
     "correct": [
-      "C"
+      "B"
     ],
     "selectCount": 1,
     "explanation": "Multiple matches require clarification, not heuristic selection, because acting on the wrong account is costly."
@@ -288,7 +288,7 @@
       },
       {
         "key": "B",
-        "text": "Maintain a persistent case-facts block (amounts, dates, order numbers, statuses) that is included in each prompt, outside the summarized history."
+        "text": "Ask the model to repeat all facts at the end of every reply."
       },
       {
         "key": "C",
@@ -296,11 +296,11 @@
       },
       {
         "key": "D",
-        "text": "Ask the model to repeat all facts at the end of every reply."
+        "text": "Maintain a persistent case-facts block (amounts, dates, order numbers, statuses) that is included in each prompt, outside the summarized history."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Transactional facts are kept verbatim in a separate context layer so progressive summarization cannot degrade them."
@@ -314,23 +314,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Keep the full result so nothing is lost."
-      },
-      {
-        "key": "B",
         "text": "Trim the tool output to the return-relevant fields before it accumulates in context."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Tell the model to ignore the unused fields."
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Switch to a model with a larger context window."
+      },
+      {
+        "key": "D",
+        "text": "Keep the full result so nothing is lost."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Tool results consume tokens disproportionately to relevance; trimming at the source keeps context focused."
@@ -344,15 +344,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Handle the first request only and ignore the rest."
-      },
-      {
-        "key": "B",
         "text": "Split the request into distinct items, investigate each, then synthesize one unified response."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Refuse until the customer submits one request per message."
+      },
+      {
+        "key": "C",
+        "text": "Handle the first request only and ignore the rest."
       },
       {
         "key": "D",
@@ -360,7 +360,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Multi-concern requests are decomposed and investigated before synthesis so no concern is dropped."
@@ -374,7 +374,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Tool results are appended to the conversation history so the model can reason about the next action."
+        "text": "An arbitrary iteration cap is the primary stopping mechanism."
       },
       {
         "key": "B",
@@ -382,16 +382,16 @@
       },
       {
         "key": "C",
-        "text": "The loop terminates when stop_reason is \"end_turn\"."
+        "text": "Tool results are appended to the conversation history so the model can reason about the next action."
       },
       {
         "key": "D",
-        "text": "An arbitrary iteration cap is the primary stopping mechanism."
+        "text": "The loop terminates when stop_reason is \"end_turn\"."
       }
     ],
     "correct": [
-      "A",
-      "C"
+      "C",
+      "D"
     ],
     "selectCount": 2,
     "explanation": "Results must be appended for the model to continue reasoning, and end_turn is the completion signal. Text parsing and caps are anti-patterns."
@@ -405,15 +405,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Hardcode the token in a committed .mcp.json."
-      },
-      {
-        "key": "B",
         "text": "In project-scoped .mcp.json, referencing the token with environment variable expansion such as ${CRM_TOKEN}."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "In each user's personal config only, so the token never reaches the repo."
+      },
+      {
+        "key": "C",
+        "text": "Hardcode the token in a committed .mcp.json."
       },
       {
         "key": "D",
@@ -421,7 +421,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Shared tooling goes in project scope and credentials come from environment variables, so no secret is committed."
@@ -435,23 +435,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Nothing; 97% overall is sufficient to automate."
-      },
-      {
-        "key": "B",
         "text": "Accuracy by issue type and field using stratified random sampling, because the aggregate can hide weak segments."
       },
       {
+        "key": "B",
+        "text": "Remove reviewers and rely on customer complaints."
+      },
+      {
         "key": "C",
-        "text": "Raise the confidence threshold so fewer cases are automated."
+        "text": "Nothing; 97% overall is sufficient to automate."
       },
       {
         "key": "D",
-        "text": "Remove reviewers and rely on customer complaints."
+        "text": "Raise the confidence threshold so fewer cases are automated."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Aggregate metrics can mask poor performance on specific segments, so verify per segment before reducing review."
@@ -465,15 +465,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Ask the new member to copy the lead's ~/.claude/CLAUDE.md."
-      },
-      {
-        "key": "B",
         "text": "Move the standards into the project-level CLAUDE.md (or .claude/CLAUDE.md) and commit it."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Place the standards in ~/.claude/rules so they apply everywhere."
+      },
+      {
+        "key": "C",
+        "text": "Ask the new member to copy the lead's ~/.claude/CLAUDE.md."
       },
       {
         "key": "D",
@@ -481,7 +481,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "User-level instructions are not shared through version control; team standards belong at project level."
@@ -495,23 +495,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Keep one file; Claude reads it all anyway."
+        "text": "Copy the whole file into every subdirectory."
       },
       {
         "key": "B",
-        "text": "Split topic files into .claude/rules/ (for example testing.md, api-conventions.md, deployment.md), optionally importing them with @import."
-      },
-      {
-        "key": "C",
         "text": "Delete the sections that are rarely used."
       },
       {
+        "key": "C",
+        "text": "Keep one file; Claude reads it all anyway."
+      },
+      {
         "key": "D",
-        "text": "Copy the whole file into every subdirectory."
+        "text": "Split topic files into .claude/rules/ (for example testing.md, api-conventions.md, deployment.md), optionally importing them with @import."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Modular topic files keep instructions focused and maintainable."
@@ -525,23 +525,23 @@
     "options": [
       {
         "key": "A",
-        "text": ".claude/commands/ in the project repository"
+        "text": "A commands array in .claude/config.json"
       },
       {
         "key": "B",
-        "text": "~/.claude/commands/ on each developer's machine"
-      },
-      {
-        "key": "C",
         "text": "The CLAUDE.md file at the project root"
       },
       {
+        "key": "C",
+        "text": "~/.claude/commands/ on each developer's machine"
+      },
+      {
         "key": "D",
-        "text": "A commands array in .claude/config.json"
+        "text": ".claude/commands/ in the project repository"
       }
     ],
     "correct": [
-      "A"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Project-scoped commands in .claude/commands/ are version controlled and automatically available to everyone who pulls the repo."
@@ -555,23 +555,23 @@
     "options": [
       {
         "key": "A",
-        "text": "allowed-tools"
-      },
-      {
-        "key": "B",
-        "text": "context: fork"
-      },
-      {
-        "key": "C",
         "text": "argument-hint"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Moving the skill to ~/.claude/skills/"
+      },
+      {
+        "key": "C",
+        "text": "allowed-tools"
+      },
+      {
+        "key": "D",
+        "text": "context: fork"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "context: fork runs the skill in an isolated sub-agent context so verbose output does not pollute the main session."
@@ -585,25 +585,25 @@
     "options": [
       {
         "key": "A",
-        "text": "allowed-tools"
-      },
-      {
-        "key": "B",
         "text": "context"
       },
       {
+        "key": "B",
+        "text": "allowed-tools"
+      },
+      {
         "key": "C",
-        "text": "argument-hint"
+        "text": "nested_agents"
       },
       {
         "key": "D",
-        "text": "nested_agents"
+        "text": "argument-hint"
       }
     ],
     "correct": [
       "A",
       "B",
-      "C"
+      "D"
     ],
     "selectCount": 3,
     "explanation": "allowed-tools restricts tools, context controls isolation, and argument-hint prompts for parameters. nested_agents is not a skill field."
@@ -617,23 +617,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Add a CLAUDE.md to every directory that contains tests."
-      },
-      {
-        "key": "B",
         "text": "Create a .claude/rules/ file with YAML frontmatter paths: [\"**/*.test.tsx\"] containing the test conventions."
       },
       {
+        "key": "B",
+        "text": "Add a CLAUDE.md to every directory that contains tests."
+      },
+      {
         "key": "C",
-        "text": "Put all test conventions in the root CLAUDE.md and rely on Claude to infer which apply."
+        "text": "Create a skill and invoke it manually before writing tests."
       },
       {
         "key": "D",
-        "text": "Create a skill and invoke it manually before writing tests."
+        "text": "Put all test conventions in the root CLAUDE.md and rely on Claude to infer which apply."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Glob-scoped rules apply by file pattern regardless of directory, while directory CLAUDE.md files cannot span scattered locations."
@@ -651,19 +651,19 @@
       },
       {
         "key": "B",
-        "text": "Plan mode, to explore dependencies and agree on an approach before editing."
+        "text": "Direct execution, switching to plan mode only if something breaks."
       },
       {
         "key": "C",
-        "text": "Direct execution with a very long prompt listing every file."
+        "text": "Plan mode, to explore dependencies and agree on an approach before editing."
       },
       {
         "key": "D",
-        "text": "Direct execution, switching to plan mode only if something breaks."
+        "text": "Direct execution with a very long prompt listing every file."
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Large changes with multiple valid approaches benefit from plan mode, which prevents costly rework."
@@ -681,7 +681,7 @@
       },
       {
         "key": "B",
-        "text": "Direct execution."
+        "text": "Ask for a design review before fixing."
       },
       {
         "key": "C",
@@ -689,11 +689,11 @@
       },
       {
         "key": "D",
-        "text": "Ask for a design review before fixing."
+        "text": "Direct execution."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Well-scoped, well-understood changes do not need planning overhead."
@@ -707,11 +707,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Implement the cache and fix failures later."
+        "text": "Generate the full implementation in one message with no questions."
       },
       {
         "key": "B",
-        "text": "Use the interview pattern: have Claude ask questions that surface considerations such as invalidation strategy and failure modes before implementing."
+        "text": "Implement the cache and fix failures later."
       },
       {
         "key": "C",
@@ -719,11 +719,11 @@
       },
       {
         "key": "D",
-        "text": "Generate the full implementation in one message with no questions."
+        "text": "Use the interview pattern: have Claude ask questions that surface considerations such as invalidation strategy and failure modes before implementing."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "The interview pattern surfaces design considerations the developer may not have anticipated."
@@ -737,23 +737,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Write a longer prose description."
-      },
-      {
-        "key": "B",
-        "text": "Provide 2-3 concrete input/output examples."
-      },
-      {
-        "key": "C",
         "text": "Lower the temperature and rerun."
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Remove the transform from the specification."
+      },
+      {
+        "key": "C",
+        "text": "Write a longer prose description."
+      },
+      {
+        "key": "D",
+        "text": "Provide 2-3 concrete input/output examples."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Concrete input/output examples communicate transformations more reliably than prose when descriptions are interpreted inconsistently."
@@ -767,11 +767,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Retry the same Edit with the same text."
+        "text": "Read the full file, then use Write to replace it with the modified content."
       },
       {
         "key": "B",
-        "text": "Read the full file, then use Write to replace it with the modified content."
+        "text": "Use Grep, which can modify files."
       },
       {
         "key": "C",
@@ -779,11 +779,11 @@
       },
       {
         "key": "D",
-        "text": "Use Grep, which can modify files."
+        "text": "Retry the same Edit with the same text."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "When no unique anchor text exists, Read plus Write is the dependable fallback for the modification."
@@ -797,11 +797,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Glob"
+        "text": "Grep"
       },
       {
         "key": "B",
-        "text": "Grep"
+        "text": "Glob"
       },
       {
         "key": "C",
@@ -813,7 +813,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Grep searches file contents for patterns such as function names; Glob matches file paths."
@@ -827,15 +827,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Add \"only report high-confidence findings\"."
+        "text": "Increase the number of findings the model is allowed to return."
       },
       {
         "key": "B",
-        "text": "Replace the vague instruction with explicit criteria, such as flag comments only when the claimed behavior contradicts the actual code."
+        "text": "Add \"only report high-confidence findings\"."
       },
       {
         "key": "C",
-        "text": "Increase the number of findings the model is allowed to return."
+        "text": "Replace the vague instruction with explicit criteria, such as flag comments only when the claimed behavior contradicts the actual code."
       },
       {
         "key": "D",
@@ -843,7 +843,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "General instructions like \"be conservative\" do not produce precision; specific categorical criteria do."
@@ -857,23 +857,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Resume silently and let the agent discover the changes."
-      },
-      {
-        "key": "B",
         "text": "Resume, and explicitly tell the agent which files changed so it can re-analyze them specifically."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Fork the session without telling the agent anything."
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Start over with no summary so nothing stale is reused."
+      },
+      {
+        "key": "D",
+        "text": "Resume silently and let the agent discover the changes."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Informing the resumed session about specific file changes allows targeted re-analysis instead of full re-exploration."
@@ -887,11 +887,11 @@
     "options": [
       {
         "key": "A",
-        "text": "fork_session from the shared analysis baseline"
+        "text": "Copy-pasting the analysis into two new unrelated sessions"
       },
       {
         "key": "B",
-        "text": "Copy-pasting the analysis into two new unrelated sessions"
+        "text": "fork_session from the shared analysis baseline"
       },
       {
         "key": "C",
@@ -903,7 +903,7 @@
       }
     ],
     "correct": [
-      "A"
+      "B"
     ],
     "selectCount": 1,
     "explanation": "fork_session creates independent branches from a shared baseline for divergent exploration."
@@ -917,15 +917,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Subagents message each other directly for speed."
-      },
-      {
-        "key": "B",
         "text": "The coordinator routes all inter-subagent communication, handling errors and information flow."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Subagents share a global memory and coordinate through it."
+      },
+      {
+        "key": "C",
+        "text": "Subagents message each other directly for speed."
       },
       {
         "key": "D",
@@ -933,7 +933,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Hub-and-spoke design keeps routing, error handling and observability in the coordinator."
@@ -947,23 +947,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Assume it inherits the search subagent's context."
-      },
-      {
-        "key": "B",
         "text": "Include the complete findings explicitly in the synthesis subagent's prompt."
       },
       {
+        "key": "B",
+        "text": "Rely on the session memory from the previous call."
+      },
+      {
         "key": "C",
-        "text": "Store them in a shared global variable."
+        "text": "Assume it inherits the search subagent's context."
       },
       {
         "key": "D",
-        "text": "Rely on the session memory from the previous call."
+        "text": "Store them in a shared global variable."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Subagents do not inherit parent context or share memory, so findings must be passed explicitly."
@@ -977,11 +977,11 @@
     "options": [
       {
         "key": "A",
-        "text": "The coordinator's allowedTools includes \"Task\"."
+        "text": "Each subagent has an AgentDefinition with its own tool restrictions."
       },
       {
         "key": "B",
-        "text": "Each subagent has an AgentDefinition with its own tool restrictions."
+        "text": "The coordinator's allowedTools includes \"Task\"."
       },
       {
         "key": "C",
@@ -1009,23 +1009,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Launch one, wait for its result, then launch the next in a later turn."
-      },
-      {
-        "key": "B",
-        "text": "Emit multiple Task tool calls in a single coordinator response."
-      },
-      {
-        "key": "C",
         "text": "Start separate threads from inside the coordinator's prompt."
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Run them sequentially to avoid conflicts."
+      },
+      {
+        "key": "C",
+        "text": "Emit multiple Task tool calls in a single coordinator response."
+      },
+      {
+        "key": "D",
+        "text": "Launch one, wait for its result, then launch the next in a later turn."
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Multiple Task calls in one response enable parallel subagent execution."
@@ -1039,7 +1039,7 @@
     "options": [
       {
         "key": "A",
-        "text": "The synthesis agent lacks instructions for identifying coverage gaps."
+        "text": "The web search queries were not comprehensive enough."
       },
       {
         "key": "B",
@@ -1047,7 +1047,7 @@
       },
       {
         "key": "C",
-        "text": "The web search queries were not comprehensive enough."
+        "text": "The synthesis agent lacks instructions for identifying coverage gaps."
       },
       {
         "key": "D",
@@ -1069,23 +1069,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Run the pipeline once and publish the result."
-      },
-      {
-        "key": "B",
-        "text": "Use an iterative refinement loop: the coordinator evaluates the synthesis for gaps, re-delegates targeted queries, and repeats until coverage is sufficient."
-      },
-      {
-        "key": "C",
         "text": "Always add more subagents regardless of the query."
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Ask the end user to judge coverage each time."
+      },
+      {
+        "key": "C",
+        "text": "Use an iterative refinement loop: the coordinator evaluates the synthesis for gaps, re-delegates targeted queries, and repeats until coverage is sufficient."
+      },
+      {
+        "key": "D",
+        "text": "Run the pipeline once and publish the result."
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Iterative refinement lets the coordinator close gaps based on evaluated synthesis output."
@@ -1099,7 +1099,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Failure type, the attempted query, any partial results, and potential alternative approaches."
+        "text": "An empty result set marked as successful."
       },
       {
         "key": "B",
@@ -1107,7 +1107,7 @@
       },
       {
         "key": "C",
-        "text": "An empty result set marked as successful."
+        "text": "Failure type, the attempted query, any partial results, and potential alternative approaches."
       },
       {
         "key": "D",
@@ -1115,7 +1115,7 @@
       }
     ],
     "correct": [
-      "A"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Structured error context lets the coordinator decide whether to retry, change the query, or proceed with partial results."
@@ -1129,15 +1129,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Propagate every transient error immediately to the coordinator."
-      },
-      {
-        "key": "B",
         "text": "Retry transient failures locally inside the subagent, and propagate only errors it cannot resolve, with partial results and what was attempted."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Catch errors silently and return an empty result."
+      },
+      {
+        "key": "C",
+        "text": "Propagate every transient error immediately to the coordinator."
       },
       {
         "key": "D",
@@ -1145,7 +1145,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Local recovery for transient failures avoids unnecessary coordinator work, while unresolved errors still reach the coordinator with full context."
@@ -1163,11 +1163,11 @@
       },
       {
         "key": "B",
-        "text": "Restrict its tool set to what synthesis needs, and provide a scoped verify_fact tool for common simple checks."
+        "text": "Give it every tool so it can never be blocked."
       },
       {
         "key": "C",
-        "text": "Give it every tool so it can never be blocked."
+        "text": "Restrict its tool set to what synthesis needs, and provide a scoped verify_fact tool for common simple checks."
       },
       {
         "key": "D",
@@ -1175,7 +1175,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Scoped tool access prevents cross-specialization misuse while scoped cross-role tools handle high-frequency needs."
@@ -1189,7 +1189,7 @@
     "options": [
       {
         "key": "A",
-        "text": "It is slower than returning detailed results."
+        "text": "It prevents the synthesis agent from running."
       },
       {
         "key": "B",
@@ -1197,11 +1197,11 @@
       },
       {
         "key": "C",
-        "text": "It reveals too much information to the coordinator."
+        "text": "It is slower than returning detailed results."
       },
       {
         "key": "D",
-        "text": "It prevents the synthesis agent from running."
+        "text": "It reveals too much information to the coordinator."
       }
     ],
     "correct": [
@@ -1219,15 +1219,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Reporting an access failure as a valid empty result"
-      },
-      {
-        "key": "B",
         "text": "Returning structured error context to the coordinator"
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Letting subagents retry transient failures locally"
+      },
+      {
+        "key": "C",
+        "text": "Reporting an access failure as a valid empty result"
       },
       {
         "key": "D",
@@ -1235,7 +1235,7 @@
       }
     ],
     "correct": [
-      "A"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Treating a failed access as a successful empty result silently suppresses errors and misleads the synthesis."
@@ -1249,15 +1249,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Subagents output structured claim-source mappings with source URLs and excerpts."
-      },
-      {
-        "key": "B",
         "text": "The synthesis agent merges claim-source mappings rather than discarding them."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Findings are summarized into prose without source URLs to save tokens."
+      },
+      {
+        "key": "C",
+        "text": "Subagents output structured claim-source mappings with source URLs and excerpts."
       },
       {
         "key": "D",
@@ -1266,7 +1266,7 @@
     ],
     "correct": [
       "A",
-      "B"
+      "C"
     ],
     "selectCount": 2,
     "explanation": "Source attribution is lost during summarization unless structured mappings are produced and preserved."
@@ -1284,11 +1284,11 @@
       },
       {
         "key": "B",
-        "text": "Annotate the conflict with both values and their source attributions."
+        "text": "Average the two values."
       },
       {
         "key": "C",
-        "text": "Average the two values."
+        "text": "Annotate the conflict with both values and their source attributions."
       },
       {
         "key": "D",
@@ -1296,7 +1296,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Conflicts should be annotated with attribution rather than arbitrarily resolved."
@@ -1310,7 +1310,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Ignore publication dates; the values are what matter."
+        "text": "Treat the newer value as a contradiction of the older one and discard the older."
       },
       {
         "key": "B",
@@ -1318,7 +1318,7 @@
       },
       {
         "key": "C",
-        "text": "Treat the newer value as a contradiction of the older one and discard the older."
+        "text": "Ignore publication dates; the values are what matter."
       },
       {
         "key": "D",
@@ -1340,23 +1340,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Ask the model to continue more carefully."
-      },
-      {
-        "key": "B",
-        "text": "Have subagents explore and record key findings in scratchpad files or a state manifest that the coordinator loads on resume."
-      },
-      {
-        "key": "C",
         "text": "Have one agent read every file in the codebase up front."
       },
       {
-        "key": "D",
+        "key": "B",
+        "text": "Ask the model to continue more carefully."
+      },
+      {
+        "key": "C",
         "text": "Increase max_tokens."
+      },
+      {
+        "key": "D",
+        "text": "Have subagents explore and record key findings in scratchpad files or a state manifest that the coordinator loads on resume."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Scratchpad files and manifests preserve findings across context boundaries and counteract context degradation."
@@ -1370,7 +1370,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Read every file before asking any question."
+        "text": "Glob all TypeScript files and Write a summary of each."
       },
       {
         "key": "B",
@@ -1378,7 +1378,7 @@
       },
       {
         "key": "C",
-        "text": "Glob all TypeScript files and Write a summary of each."
+        "text": "Read every file before asking any question."
       },
       {
         "key": "D",
@@ -1404,7 +1404,7 @@
       },
       {
         "key": "B",
-        "text": "Use an existing community server for the standard integration, and reserve custom servers for team-specific workflows."
+        "text": "Build a custom Jira server, since community servers are always insecure."
       },
       {
         "key": "C",
@@ -1412,11 +1412,11 @@
       },
       {
         "key": "D",
-        "text": "Build a custom Jira server, since community servers are always insecure."
+        "text": "Use an existing community server for the standard integration, and reserve custom servers for team-specific workflows."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Community servers cover standard integrations; custom servers are justified only for team-specific needs."
@@ -1430,15 +1430,15 @@
     "options": [
       {
         "key": "A",
-        "text": "In the project's committed .mcp.json"
+        "text": "In the root CLAUDE.md"
       },
       {
         "key": "B",
-        "text": "In the user-scoped configuration (~/.claude.json)"
+        "text": "In the project's committed .mcp.json"
       },
       {
         "key": "C",
-        "text": "In the root CLAUDE.md"
+        "text": "In the user-scoped configuration (~/.claude.json)"
       },
       {
         "key": "D",
@@ -1446,7 +1446,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Personal or experimental servers belong in user scope so they do not affect teammates."
@@ -1460,23 +1460,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Remove Grep from the environment."
-      },
-      {
-        "key": "B",
-        "text": "Improve the MCP tool's description so it explains its capabilities and outputs in detail."
-      },
-      {
-        "key": "C",
         "text": "Add more few-shot examples of Grep usage."
       },
       {
-        "key": "D",
+        "key": "B",
+        "text": "Remove Grep from the environment."
+      },
+      {
+        "key": "C",
         "text": "Lower the temperature."
+      },
+      {
+        "key": "D",
+        "text": "Improve the MCP tool's description so it explains its capabilities and outputs in detail."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Tool descriptions drive selection; detailed descriptions make the more capable tool preferable."
@@ -1490,7 +1490,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Exposing an issue-summary catalog as MCP resources"
+        "text": "Exposing a documentation hierarchy or database schema as MCP resources"
       },
       {
         "key": "B",
@@ -1498,7 +1498,7 @@
       },
       {
         "key": "C",
-        "text": "Exposing a documentation hierarchy or database schema as MCP resources"
+        "text": "Exposing an issue-summary catalog as MCP resources"
       },
       {
         "key": "D",
@@ -1521,23 +1521,23 @@
     "options": [
       {
         "key": "A",
-        "text": "argument-hint"
+        "text": "paths"
       },
       {
         "key": "B",
-        "text": "allowed-tools"
-      },
-      {
-        "key": "C",
         "text": "context: fork"
       },
       {
+        "key": "C",
+        "text": "allowed-tools"
+      },
+      {
         "key": "D",
-        "text": "paths"
+        "text": "argument-hint"
       }
     ],
     "correct": [
-      "A"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "argument-hint prompts developers for required parameters when they invoke the skill without arguments."
@@ -1551,11 +1551,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Edit the team's project skill directly."
+        "text": "Create a personal skill in ~/.claude/skills/ with a different name."
       },
       {
         "key": "B",
-        "text": "Create a personal skill in ~/.claude/skills/ with a different name."
+        "text": "Edit the team's project skill directly."
       },
       {
         "key": "C",
@@ -1567,7 +1567,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Personal skills with distinct names avoid affecting the shared version."
@@ -1581,11 +1581,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Ask the model to normalize each format in the prompt."
+        "text": "Use a PostToolUse hook that normalizes the data format before the result reaches the model."
       },
       {
         "key": "B",
-        "text": "Use a PostToolUse hook that normalizes the data format before the result reaches the model."
+        "text": "Ignore the difference; formats do not affect results."
       },
       {
         "key": "C",
@@ -1593,11 +1593,11 @@
       },
       {
         "key": "D",
-        "text": "Ignore the difference; formats do not affect results."
+        "text": "Ask the model to normalize each format in the prompt."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "PostToolUse hooks transform tool results deterministically before the model processes them."
@@ -1611,11 +1611,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Use the Explore subagent so verbose discovery is isolated and only summaries return to the main conversation."
+        "text": "Have the main agent read every file so nothing is missed."
       },
       {
         "key": "B",
-        "text": "Have the main agent read every file so nothing is missed."
+        "text": "Use the Explore subagent so verbose discovery is isolated and only summaries return to the main conversation."
       },
       {
         "key": "C",
@@ -1627,7 +1627,7 @@
       }
     ],
     "correct": [
-      "A"
+      "B"
     ],
     "selectCount": 1,
     "explanation": "The Explore subagent isolates verbose exploration output and returns summaries, preserving main conversation context."
@@ -1645,7 +1645,7 @@
       },
       {
         "key": "B",
-        "text": "Plan mode to investigate and design, then direct execution to implement the agreed approach."
+        "text": "Skip investigation entirely."
       },
       {
         "key": "C",
@@ -1653,11 +1653,11 @@
       },
       {
         "key": "D",
-        "text": "Skip investigation entirely."
+        "text": "Plan mode to investigate and design, then direct execution to implement the agreed approach."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Plan mode suits investigation and design; direct execution suits well-understood implementation."
@@ -1671,7 +1671,7 @@
     "options": [
       {
         "key": "A",
-        "text": "The project-level CLAUDE.md"
+        "text": "A shared commands file"
       },
       {
         "key": "B",
@@ -1679,11 +1679,11 @@
       },
       {
         "key": "C",
-        "text": "A committed .claude/rules file"
+        "text": "The project-level CLAUDE.md"
       },
       {
         "key": "D",
-        "text": "A shared commands file"
+        "text": "A committed .claude/rules file"
       }
     ],
     "correct": [
@@ -1701,7 +1701,7 @@
     "options": [
       {
         "key": "A",
-        "text": "/compact"
+        "text": "/resume"
       },
       {
         "key": "B",
@@ -1709,7 +1709,7 @@
       },
       {
         "key": "C",
-        "text": "/resume"
+        "text": "/compact"
       },
       {
         "key": "D",
@@ -1731,7 +1731,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Read"
+        "text": "Bash"
       },
       {
         "key": "B",
@@ -1743,7 +1743,7 @@
       },
       {
         "key": "D",
-        "text": "Bash"
+        "text": "Read"
       }
     ],
     "correct": [
@@ -1761,23 +1761,23 @@
     "options": [
       {
         "key": "A",
-        "text": "--resume <session-name>"
-      },
-      {
-        "key": "B",
-        "text": "Start a new session with no summary."
-      },
-      {
-        "key": "C",
         "text": "Copy the transcript into a new prompt by hand."
       },
       {
-        "key": "D",
+        "key": "B",
+        "text": "--resume <session-name>"
+      },
+      {
+        "key": "C",
         "text": "/compact"
+      },
+      {
+        "key": "D",
+        "text": "Start a new session with no summary."
       }
     ],
     "correct": [
-      "A"
+      "B"
     ],
     "selectCount": 1,
     "explanation": "--resume with a session name continues a named investigation across work sessions."
@@ -1821,23 +1821,23 @@
     "options": [
       {
         "key": "A",
-        "text": "claude \"Analyze this pull request for security issues\""
-      },
-      {
-        "key": "B",
-        "text": "claude -p \"Analyze this pull request for security issues\" --output-format json --json-schema <schema>"
-      },
-      {
-        "key": "C",
         "text": "Run claude interactively and paste the diff."
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "claude \"Analyze this pull request\" > findings.txt"
+      },
+      {
+        "key": "C",
+        "text": "claude \"Analyze this pull request for security issues\""
+      },
+      {
+        "key": "D",
+        "text": "claude -p \"Analyze this pull request for security issues\" --output-format json --json-schema <schema>"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "-p runs non-interactively; --output-format json and --json-schema enforce parseable output in CI."
@@ -1851,7 +1851,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Review in the same session so the context is preserved."
+        "text": "Ask the generator to double-check its own work."
       },
       {
         "key": "B",
@@ -1859,7 +1859,7 @@
       },
       {
         "key": "C",
-        "text": "Ask the generator to double-check its own work."
+        "text": "Review in the same session so the context is preserved."
       },
       {
         "key": "D",
@@ -1881,15 +1881,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Include prior review findings and instruct Claude to report only new or still-unaddressed issues."
+        "text": "Provide existing test files so generated tests do not duplicate covered scenarios."
       },
       {
         "key": "B",
-        "text": "Re-run the review from scratch with no prior context."
+        "text": "Include prior review findings and instruct Claude to report only new or still-unaddressed issues."
       },
       {
         "key": "C",
-        "text": "Provide existing test files so generated tests do not duplicate covered scenarios."
+        "text": "Re-run the review from scratch with no prior context."
       },
       {
         "key": "D",
@@ -1898,7 +1898,7 @@
     ],
     "correct": [
       "A",
-      "C"
+      "B"
     ],
     "selectCount": 2,
     "explanation": "Prior findings and existing tests in context prevent duplicate output."
@@ -1916,11 +1916,11 @@
       },
       {
         "key": "B",
-        "text": "Document testing standards, fixture conventions and valuable test criteria in CLAUDE.md, which CI runs read."
+        "text": "Pass the conventions only as an environment variable."
       },
       {
         "key": "C",
-        "text": "Pass the conventions only as an environment variable."
+        "text": "Document testing standards, fixture conventions and valuable test criteria in CLAUDE.md, which CI runs read."
       },
       {
         "key": "D",
@@ -1928,7 +1928,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "CLAUDE.md is the mechanism for providing project context to CI-invoked Claude Code."
@@ -1942,11 +1942,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Tell the model to be conservative."
+        "text": "Define explicit categories: report bugs and security issues; skip minor style and local patterns."
       },
       {
         "key": "B",
-        "text": "Define explicit categories: report bugs and security issues; skip minor style and local patterns."
+        "text": "Remove the review step."
       },
       {
         "key": "C",
@@ -1954,11 +1954,11 @@
       },
       {
         "key": "D",
-        "text": "Remove the review step."
+        "text": "Tell the model to be conservative."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Explicit categorical criteria define which issues to report, which generalizes better than confidence-based filtering."
@@ -1972,23 +1972,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Keep all categories and ignore developer complaints."
-      },
-      {
-        "key": "B",
         "text": "Temporarily disable that category while refining its prompt criteria."
       },
       {
+        "key": "B",
+        "text": "Keep all categories and ignore developer complaints."
+      },
+      {
         "key": "C",
-        "text": "Disable all categories permanently."
+        "text": "Lower the model's temperature and wait."
       },
       {
         "key": "D",
-        "text": "Lower the model's temperature and wait."
+        "text": "Disable all categories permanently."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Temporarily disabling high-false-positive categories restores trust while the prompt for them is improved."
@@ -2002,23 +2002,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Add longer detailed instructions only."
+        "text": "Use a longer model output limit."
       },
       {
         "key": "B",
-        "text": "Add 2-4 targeted few-shot examples for ambiguous cases, each showing the reasoning for the chosen action over plausible alternatives."
-      },
-      {
-        "key": "C",
         "text": "Add more rules to the prompt."
       },
       {
+        "key": "C",
+        "text": "Add longer detailed instructions only."
+      },
+      {
         "key": "D",
-        "text": "Use a longer model output limit."
+        "text": "Add 2-4 targeted few-shot examples for ambiguous cases, each showing the reasoning for the chosen action over plausible alternatives."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Few-shot examples with reasoning teach judgment for ambiguous cases and generalize to new patterns."
@@ -2032,15 +2032,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Parse free-form text with regular expressions."
+        "text": "Ask for a markdown table and parse it."
       },
       {
         "key": "B",
-        "text": "Define a tool with a JSON schema and read the structured tool_use input."
+        "text": "Parse free-form text with regular expressions."
       },
       {
         "key": "C",
-        "text": "Ask for a markdown table and parse it."
+        "text": "Define a tool with a JSON schema and read the structured tool_use input."
       },
       {
         "key": "D",
@@ -2048,7 +2048,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Tool use with JSON schemas is the most reliable way to get schema-compliant structured output."
@@ -2062,15 +2062,15 @@
     "options": [
       {
         "key": "A",
-        "text": "A syntax error; increase max_tokens."
-      },
-      {
-        "key": "B",
         "text": "A semantic error; add validation such as comparing calculated and stated totals, and flag discrepancies."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "A tool_choice error; set tool_choice to auto."
+      },
+      {
+        "key": "C",
+        "text": "A syntax error; increase max_tokens."
       },
       {
         "key": "D",
@@ -2078,7 +2078,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Strict schemas eliminate syntax errors but not semantic ones; semantic validation must be added explicitly."
@@ -2092,15 +2092,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Retry with error feedback until the model produces a value."
+        "text": "Let the model fill in a plausible value."
       },
       {
         "key": "B",
-        "text": "Recognize that retries will not help when the information is absent; make the field optional or nullable so it is not fabricated."
+        "text": "Retry with error feedback until the model produces a value."
       },
       {
         "key": "C",
-        "text": "Let the model fill in a plausible value."
+        "text": "Recognize that retries will not help when the information is absent; make the field optional or nullable so it is not fabricated."
       },
       {
         "key": "D",
@@ -2108,7 +2108,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Retries fix format and structural errors, not missing source information; nullable fields prevent fabrication."
@@ -2122,23 +2122,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Real-time Messages calls"
-      },
-      {
-        "key": "B",
-        "text": "The Message Batches API"
-      },
-      {
-        "key": "C",
         "text": "The Message Batches API for the pre-merge check as well"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Streaming responses"
+      },
+      {
+        "key": "C",
+        "text": "The Message Batches API"
+      },
+      {
+        "key": "D",
+        "text": "Real-time Messages calls"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Batches provide 50% savings for latency-tolerant, non-blocking workloads."
@@ -2152,15 +2152,15 @@
     "options": [
       {
         "key": "A",
-        "text": "It offers 50% cost savings."
-      },
-      {
-        "key": "B",
         "text": "It supports multi-turn tool calling within a single batch request."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "custom_id correlates each request with its response."
+      },
+      {
+        "key": "C",
+        "text": "It offers 50% cost savings."
       },
       {
         "key": "D",
@@ -2168,7 +2168,7 @@
       }
     ],
     "correct": [
-      "A",
+      "B",
       "C"
     ],
     "selectCount": 2,
@@ -2191,11 +2191,11 @@
       },
       {
         "key": "C",
-        "text": "Ask the generator to recheck its work."
+        "text": "Lower the temperature."
       },
       {
         "key": "D",
-        "text": "Lower the temperature."
+        "text": "Ask the generator to recheck its work."
       }
     ],
     "correct": [
@@ -2213,23 +2213,23 @@
     "options": [
       {
         "key": "A",
-        "text": "One larger pass over all 14 files."
-      },
-      {
-        "key": "B",
         "text": "Per-file local analysis passes plus a separate cross-file integration pass."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Switch to a model with a larger context window and keep one pass."
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Require developers to split PRs into 3-4 files before review."
+      },
+      {
+        "key": "D",
+        "text": "One larger pass over all 14 files."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Focused per-file passes avoid attention dilution, and a separate integration pass catches cross-file data flow issues."
@@ -2243,11 +2243,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Fix each one in a separate message, always."
+        "text": "Ignore the interaction and address one issue per day."
       },
       {
         "key": "B",
-        "text": "Give the interacting problems together in one detailed message, and handle the independent problem separately."
+        "text": "Fix each one in a separate message, always."
       },
       {
         "key": "C",
@@ -2255,11 +2255,11 @@
       },
       {
         "key": "D",
-        "text": "Ignore the interaction and address one issue per day."
+        "text": "Give the interacting problems together in one detailed message, and handle the independent problem separately."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Interacting problems should be presented together to avoid fixes that conflict; independent problems can be fixed sequentially."
@@ -2273,11 +2273,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Ask for JSON in the prose and parse it."
+        "text": "Ask for a markdown table."
       },
       {
         "key": "B",
-        "text": "Define an extraction tool with a JSON schema and read the arguments from the tool_use response."
+        "text": "Ask for JSON in the prose and parse it."
       },
       {
         "key": "C",
@@ -2285,11 +2285,11 @@
       },
       {
         "key": "D",
-        "text": "Ask for a markdown table."
+        "text": "Define an extraction tool with a JSON schema and read the arguments from the tool_use response."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Tool use with JSON schemas is the most reliable way to obtain compliant structured data."
@@ -2303,23 +2303,23 @@
     "options": [
       {
         "key": "A",
-        "text": "auto"
+        "text": "none"
       },
       {
         "key": "B",
-        "text": "any"
+        "text": "auto"
       },
       {
         "key": "C",
-        "text": "A forced tool selection for one specific tool"
+        "text": "any"
       },
       {
         "key": "D",
-        "text": "none"
+        "text": "A forced tool selection for one specific tool"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "\"any\" guarantees a tool call while letting the model choose which schema fits; \"auto\" may return text."
@@ -2333,23 +2333,23 @@
     "options": [
       {
         "key": "A",
-        "text": "tool_choice: \"auto\""
-      },
-      {
-        "key": "B",
-        "text": "tool_choice: {\"type\": \"tool\", \"name\": \"extract_metadata\"}"
-      },
-      {
-        "key": "C",
         "text": "tool_choice: \"any\""
       },
       {
-        "key": "D",
+        "key": "B",
+        "text": "tool_choice: \"auto\""
+      },
+      {
+        "key": "C",
         "text": "A prompt instruction saying to call extract_metadata first"
+      },
+      {
+        "key": "D",
+        "text": "tool_choice: {\"type\": \"tool\", \"name\": \"extract_metadata\"}"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "A forced named tool ensures that specific tool runs first; prompt instructions are probabilistic."
@@ -2363,11 +2363,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Mark every field as required."
+        "text": "Make fields that may be absent optional or nullable."
       },
       {
         "key": "B",
-        "text": "Make fields that may be absent optional or nullable."
+        "text": "Ask the model to always provide a best guess."
       },
       {
         "key": "C",
@@ -2375,11 +2375,11 @@
       },
       {
         "key": "D",
-        "text": "Ask the model to always provide a best guess."
+        "text": "Mark every field as required."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Optional or nullable fields let the model report absence instead of fabricating values."
@@ -2393,23 +2393,23 @@
     "options": [
       {
         "key": "A",
-        "text": "A closed enum with no other option."
+        "text": "Any string at all."
       },
       {
         "key": "B",
-        "text": "An enum that includes \"other\" plus a detail string, and \"unclear\" for ambiguous cases."
-      },
-      {
-        "key": "C",
         "text": "Free text only."
       },
       {
+        "key": "C",
+        "text": "A closed enum with no other option."
+      },
+      {
         "key": "D",
-        "text": "Any string at all."
+        "text": "An enum that includes \"other\" plus a detail string, and \"unclear\" for ambiguous cases."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "\"other\" with a detail string and \"unclear\" keep the schema extensible and handle ambiguity explicitly."
@@ -2423,7 +2423,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Add a single generic example."
+        "text": "Add more instructions with no examples."
       },
       {
         "key": "B",
@@ -2431,7 +2431,7 @@
       },
       {
         "key": "C",
-        "text": "Add more instructions with no examples."
+        "text": "Add a single generic example."
       },
       {
         "key": "D",
@@ -2453,24 +2453,24 @@
     "options": [
       {
         "key": "A",
-        "text": "Showing the reasoning behind the chosen extraction"
+        "text": "Choosing examples at random without regard to the failure cases"
       },
       {
         "key": "B",
-        "text": "Demonstrating the exact desired output format"
-      },
-      {
-        "key": "C",
         "text": "Using only one example to keep the prompt short"
       },
       {
+        "key": "C",
+        "text": "Showing the reasoning behind the chosen extraction"
+      },
+      {
         "key": "D",
-        "text": "Choosing examples at random without regard to the failure cases"
+        "text": "Demonstrating the exact desired output format"
       }
     ],
     "correct": [
-      "A",
-      "B"
+      "C",
+      "D"
     ],
     "selectCount": 2,
     "explanation": "Reasoning and exact output format make examples generalize; a single or random example does not target the failure cases."
@@ -2484,7 +2484,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Only the document again."
+        "text": "A message saying \"try harder\"."
       },
       {
         "key": "B",
@@ -2492,7 +2492,7 @@
       },
       {
         "key": "C",
-        "text": "A message saying \"try harder\"."
+        "text": "Only the document again."
       },
       {
         "key": "D",
@@ -2518,11 +2518,11 @@
       },
       {
         "key": "B",
-        "text": "A detected_pattern field that identifies the construct that triggered the finding, so dismissal patterns can be analyzed."
+        "text": "Only the timestamp."
       },
       {
         "key": "C",
-        "text": "Only the timestamp."
+        "text": "A detected_pattern field that identifies the construct that triggered the finding, so dismissal patterns can be analyzed."
       },
       {
         "key": "D",
@@ -2530,7 +2530,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Tracking the triggering pattern in each finding enables systematic analysis of false-positive patterns."
@@ -2548,7 +2548,7 @@
       },
       {
         "key": "B",
-        "text": "Identify the 7 failures by custom_id and resubmit only those, with modifications such as chunking oversized documents."
+        "text": "Ignore the 7 failures."
       },
       {
         "key": "C",
@@ -2556,11 +2556,11 @@
       },
       {
         "key": "D",
-        "text": "Ignore the 7 failures."
+        "text": "Identify the 7 failures by custom_id and resubmit only those, with modifications such as chunking oversized documents."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "custom_id allows targeted resubmission, and chunking handles context limits without reprocessing successful documents."
@@ -2574,11 +2574,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Once per day"
+        "text": "Once, at the start of the project"
       },
       {
         "key": "B",
-        "text": "Every 4 hours"
+        "text": "Once per day"
       },
       {
         "key": "C",
@@ -2586,11 +2586,11 @@
       },
       {
         "key": "D",
-        "text": "Once, at the start of the project"
+        "text": "Every 4 hours"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Submitting every 4 hours bounds the worst case at 4 + 24 = 28 hours, within the 30-hour SLA; daily submission can exceed it."
@@ -2604,23 +2604,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Nothing; 97% is strong."
+        "text": "That the model's temperature is zero."
       },
       {
         "key": "B",
-        "text": "Accuracy by document type and field, so weak segments are not hidden by the aggregate."
+        "text": "Nothing; 97% is strong."
       },
       {
         "key": "C",
-        "text": "Only the accuracy on the first page of each document."
+        "text": "Accuracy by document type and field, so weak segments are not hidden by the aggregate."
       },
       {
         "key": "D",
-        "text": "That the model's temperature is zero."
+        "text": "Only the accuracy on the first page of each document."
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Aggregate accuracy can mask poor performance on specific document types or fields."
@@ -2634,23 +2634,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Route using raw, uncalibrated self-reported confidence."
-      },
-      {
-        "key": "B",
-        "text": "Output field-level confidence scores, calibrate them on a labeled validation set, and route low-confidence fields to review."
-      },
-      {
-        "key": "C",
         "text": "Send no extractions to review."
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Send every extraction to review."
+      },
+      {
+        "key": "C",
+        "text": "Route using raw, uncalibrated self-reported confidence."
+      },
+      {
+        "key": "D",
+        "text": "Output field-level confidence scores, calibrate them on a labeled validation set, and route low-confidence fields to review."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Calibrated field-level confidence, validated on labeled data, focuses limited reviewer capacity where it matters."
@@ -2664,23 +2664,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Drop source references to simplify output."
-      },
-      {
-        "key": "B",
         "text": "Keep structured claim-source mappings (document name, excerpt, page) through every stage."
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Write one summary paragraph with no sources."
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Store sources only in application logs."
+      },
+      {
+        "key": "D",
+        "text": "Drop source references to simplify output."
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Structured claim-source mappings preserve attribution through extraction and synthesis."
@@ -2694,23 +2694,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Summarized into prose within the running history."
-      },
-      {
-        "key": "B",
-        "text": "In a structured fact block kept outside the summarized history and included in each prompt."
-      },
-      {
-        "key": "C",
         "text": "Only in the most recent message."
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Nowhere; the model remembers them."
+      },
+      {
+        "key": "C",
+        "text": "Summarized into prose within the running history."
+      },
+      {
+        "key": "D",
+        "text": "In a structured fact block kept outside the summarized history and included in each prompt."
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Verbatim transactional facts in a separate block avoid the degradation caused by progressive summarization."
@@ -2724,23 +2724,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Return the text as the final answer"
-      },
-      {
-        "key": "B",
-        "text": "Execute the requested tool, append the result to the conversation, and call the model again"
-      },
-      {
-        "key": "C",
         "text": "Terminate because a tool was requested"
       },
       {
-        "key": "D",
+        "key": "B",
+        "text": "Return the text as the final answer"
+      },
+      {
+        "key": "C",
         "text": "Ask the user whether to continue"
+      },
+      {
+        "key": "D",
+        "text": "Execute the requested tool, append the result to the conversation, and call the model again"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "tool_use means the model needs a tool result; the result is appended so the next call can reason about it."
@@ -2754,28 +2754,28 @@
     "options": [
       {
         "key": "A",
-        "text": "It continues while stop_reason is \"tool_use\""
-      },
-      {
-        "key": "B",
         "text": "It ends when stop_reason is \"end_turn\""
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "It ends when the assistant writes \"Task complete\""
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "It ends after 10 iterations regardless of stop_reason"
       },
       {
-        "key": "E",
+        "key": "D",
         "text": "It skips appending tool results to save tokens"
+      },
+      {
+        "key": "E",
+        "text": "It continues while stop_reason is \"tool_use\""
       }
     ],
     "correct": [
       "A",
-      "B"
+      "E"
     ],
     "selectCount": 2,
     "explanation": "Control flow follows stop_reason. Text markers and fixed caps are anti-patterns, and skipping tool results removes the information the model needs."
@@ -2789,23 +2789,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Always invoke every subagent"
-      },
-      {
-        "key": "B",
         "text": "The coordinator analyzes query requirements and dynamically selects which subagents to invoke"
       },
       {
+        "key": "B",
+        "text": "Always invoke every subagent"
+      },
+      {
         "key": "C",
-        "text": "Subagents decide among themselves who runs"
+        "text": "Random subagent selection for load balancing"
       },
       {
         "key": "D",
-        "text": "Random subagent selection for load balancing"
+        "text": "Subagents decide among themselves who runs"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Dynamic selection by query requirements is a coordinator responsibility in the hub-and-spoke pattern."
@@ -2849,7 +2849,7 @@
     "options": [
       {
         "key": "A",
-        "text": "A coordinator cannot spawn subagents unless \"Task\" is in its allowedTools"
+        "text": "Subagents must list \"Task\" to be spawned"
       },
       {
         "key": "B",
@@ -2857,7 +2857,7 @@
       },
       {
         "key": "C",
-        "text": "Subagents must list \"Task\" to be spawned"
+        "text": "A coordinator cannot spawn subagents unless \"Task\" is in its allowedTools"
       },
       {
         "key": "D",
@@ -2865,7 +2865,7 @@
       }
     ],
     "correct": [
-      "A"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "The Task tool is the spawning mechanism, so the coordinator must have it in allowedTools."
@@ -2879,23 +2879,23 @@
     "options": [
       {
         "key": "A",
-        "text": "It automatically inherits the coordinator's conversation history"
+        "text": "It reads the coordinator's scratchpad by default"
       },
       {
         "key": "B",
-        "text": "It shares memory with other subagents between invocations"
-      },
-      {
-        "key": "C",
         "text": "Any context it needs must be included explicitly in its prompt"
       },
       {
+        "key": "C",
+        "text": "It shares memory with other subagents between invocations"
+      },
+      {
         "key": "D",
-        "text": "It reads the coordinator's scratchpad by default"
+        "text": "It automatically inherits the coordinator's conversation history"
       }
     ],
     "correct": [
-      "C"
+      "B"
     ],
     "selectCount": 1,
     "explanation": "Subagents do not inherit parent context or share memory, so findings and instructions must be passed explicitly."
@@ -2913,7 +2913,7 @@
       },
       {
         "key": "B",
-        "text": "Explore divergent approaches from a shared analysis baseline"
+        "text": "Delete old sessions to free space"
       },
       {
         "key": "C",
@@ -2921,11 +2921,11 @@
       },
       {
         "key": "D",
-        "text": "Delete old sessions to free space"
+        "text": "Explore divergent approaches from a shared analysis baseline"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Forking creates independent branches from a common baseline so alternatives can be compared."
@@ -2939,23 +2939,23 @@
     "options": [
       {
         "key": "A",
-        "text": "A PreToolUse hook that blocks process_refund without a verified customer ID"
-      },
-      {
-        "key": "B",
-        "text": "A programmatic prerequisite that blocks lookup_order until get_customer succeeds"
-      },
-      {
-        "key": "C",
         "text": "A system prompt instruction that says to verify identity first"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "A tool that returns an error when the customer is unverified"
+      },
+      {
+        "key": "C",
+        "text": "A programmatic prerequisite that blocks lookup_order until get_customer succeeds"
+      },
+      {
+        "key": "D",
+        "text": "A PreToolUse hook that blocks process_refund without a verified customer ID"
       }
     ],
     "correct": [
-      "C"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Prompt instructions alone are probabilistic; when compliance is required, enforce it programmatically."
@@ -2969,29 +2969,29 @@
     "options": [
       {
         "key": "A",
-        "text": "A hook that blocks process_refund above $500"
-      },
-      {
-        "key": "B",
-        "text": "A prompt sentence reading \"never refund over $500\""
-      },
-      {
-        "key": "C",
         "text": "A prerequisite that requires get_customer before any order lookup"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "A few-shot example showing the correct order of calls"
       },
       {
-        "key": "E",
+        "key": "C",
         "text": "A check that rejects tool calls when no verified customer ID exists"
+      },
+      {
+        "key": "D",
+        "text": "A hook that blocks process_refund above $500"
+      },
+      {
+        "key": "E",
+        "text": "A prompt sentence reading \"never refund over $500\""
       }
     ],
     "correct": [
       "A",
       "C",
-      "E"
+      "D"
     ],
     "selectCount": 3,
     "explanation": "Hooks and programmatic prerequisites block actions deterministically. Prompt sentences and examples only influence behaviour."
@@ -3005,23 +3005,23 @@
     "options": [
       {
         "key": "A",
-        "text": "After the tool returns and before the model processes the result"
-      },
-      {
-        "key": "B",
-        "text": "Before the user sends the prompt"
-      },
-      {
-        "key": "C",
         "text": "Only after the session ends"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Inside the model's reasoning"
+      },
+      {
+        "key": "C",
+        "text": "Before the user sends the prompt"
+      },
+      {
+        "key": "D",
+        "text": "After the tool returns and before the model processes the result"
       }
     ],
     "correct": [
-      "A"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "PostToolUse intercepts tool results so they can be transformed before the model sees them."
@@ -3035,23 +3035,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Adding a sentence about the limit to the system prompt"
-      },
-      {
-        "key": "B",
         "text": "A tool-call interception hook that blocks outgoing process_refund calls above the threshold and redirects to escalation"
       },
       {
+        "key": "B",
+        "text": "Adding a sentence about the limit to the system prompt"
+      },
+      {
         "key": "C",
-        "text": "Lowering the model temperature"
+        "text": "Logging refunds after they are processed"
       },
       {
         "key": "D",
-        "text": "Logging refunds after they are processed"
+        "text": "Lowering the model temperature"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Interception hooks enforce compliance rules on outgoing calls and can redirect the workflow."
@@ -3065,23 +3065,23 @@
     "options": [
       {
         "key": "A",
-        "text": "A PostToolUse hook that normalizes dates to ISO 8601 before validation"
-      },
-      {
-        "key": "B",
-        "text": "Asking the model in the prompt to format every date correctly"
-      },
-      {
-        "key": "C",
         "text": "Normalizing only in the downstream database"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Removing date fields from the schema"
+      },
+      {
+        "key": "C",
+        "text": "Asking the model in the prompt to format every date correctly"
+      },
+      {
+        "key": "D",
+        "text": "A PostToolUse hook that normalizes dates to ISO 8601 before validation"
       }
     ],
     "correct": [
-      "A"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Deterministic normalization in a hook is more reliable than asking the model to format data consistently."
@@ -3095,23 +3095,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Open-ended investigation where subtopics are unknown in advance"
-      },
-      {
-        "key": "B",
         "text": "Predictable multi-aspect reviews with known steps"
       },
       {
+        "key": "B",
+        "text": "Open-ended investigation where subtopics are unknown in advance"
+      },
+      {
         "key": "C",
-        "text": "Real-time chat with a user"
+        "text": "Exploring divergent approaches in parallel"
       },
       {
         "key": "D",
-        "text": "Exploring divergent approaches in parallel"
+        "text": "Real-time chat with a user"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Fixed sequential pipelines suit predictable reviews; dynamic decomposition suits open-ended investigation."
@@ -3125,11 +3125,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Write tests for every file immediately"
+        "text": "Map the structure, identify high-impact areas, then build a prioritized plan that adapts as dependencies are discovered"
       },
       {
         "key": "B",
-        "text": "Map the structure, identify high-impact areas, then build a prioritized plan that adapts as dependencies are discovered"
+        "text": "Write tests for every file immediately"
       },
       {
         "key": "C",
@@ -3141,7 +3141,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Open-ended tasks call for adaptive decomposition: map first, prioritize, then adjust the plan as dependencies appear."
@@ -3155,23 +3155,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Ignore it to stay within the original plan"
-      },
-      {
-        "key": "B",
         "text": "Generate a new subtask for that dependency based on what was discovered"
       },
       {
+        "key": "B",
+        "text": "Ignore it to stay within the original plan"
+      },
+      {
         "key": "C",
-        "text": "Restart the whole review from scratch"
+        "text": "Stop and wait for the developer to resolve it"
       },
       {
         "key": "D",
-        "text": "Stop and wait for the developer to resolve it"
+        "text": "Restart the whole review from scratch"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Adaptive investigation plans generate subtasks from findings at each step."
@@ -3189,7 +3189,7 @@
       },
       {
         "key": "B",
-        "text": "fork_session from the shared analysis baseline"
+        "text": "Run /compact and continue"
       },
       {
         "key": "C",
@@ -3197,11 +3197,11 @@
       },
       {
         "key": "D",
-        "text": "Run /compact and continue"
+        "text": "fork_session from the shared analysis baseline"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "fork_session creates independent branches from a shared baseline for divergent exploration."
@@ -3245,23 +3245,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Rename one of them to a random string"
+        "text": "Put both tool names in the system prompt"
       },
       {
         "key": "B",
-        "text": "Rewrite both descriptions with distinct purpose, expected inputs, outputs and when to use each"
+        "text": "Rename one of them to a random string"
       },
       {
         "key": "C",
-        "text": "Delete analyze_document"
+        "text": "Rewrite both descriptions with distinct purpose, expected inputs, outputs and when to use each"
       },
       {
         "key": "D",
-        "text": "Put both tool names in the system prompt"
+        "text": "Delete analyze_document"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Tool descriptions are the primary selection signal; distinct, specific descriptions reduce misrouting."
@@ -3275,23 +3275,23 @@
     "options": [
       {
         "key": "A",
-        "text": "\"Processes data.\""
-      },
-      {
-        "key": "B",
-        "text": "\"Extracts data points (dates, amounts, names) from document text. Input: document text. Output: JSON list. Use for extraction, not summarization.\""
-      },
-      {
-        "key": "C",
         "text": "\"Tool 3\""
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "\"Helper for various things.\""
+      },
+      {
+        "key": "C",
+        "text": "\"Extracts data points (dates, amounts, names) from document text. Input: document text. Output: JSON list. Use for extraction, not summarization.\""
+      },
+      {
+        "key": "D",
+        "text": "\"Processes data.\""
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "A strong description states purpose, inputs, outputs and the boundary with similar tools."
@@ -3305,24 +3305,24 @@
     "options": [
       {
         "key": "A",
-        "text": "\"Always search when the user mentions a file\""
-      },
-      {
-        "key": "B",
         "text": "\"Be concise in your replies\""
       },
       {
+        "key": "B",
+        "text": "\"Respond in English\""
+      },
+      {
         "key": "C",
-        "text": "\"When the user says order, call search_orders\""
+        "text": "\"Always search when the user mentions a file\""
       },
       {
         "key": "D",
-        "text": "\"Respond in English\""
+        "text": "\"When the user says order, call search_orders\""
       }
     ],
     "correct": [
-      "A",
-      "C"
+      "C",
+      "D"
     ],
     "selectCount": 2,
     "explanation": "Keyword-sensitive instructions create tool associations that bypass the descriptions."
@@ -3336,11 +3336,11 @@
     "options": [
       {
         "key": "A",
-        "text": "\"Operation failed\""
+        "text": "errorCategory \"transient\", isRetryable true, and a human-readable explanation"
       },
       {
         "key": "B",
-        "text": "errorCategory \"transient\", isRetryable true, and a human-readable explanation"
+        "text": "Throw an exception that ends the session"
       },
       {
         "key": "C",
@@ -3348,11 +3348,11 @@
       },
       {
         "key": "D",
-        "text": "Throw an exception that ends the session"
+        "text": "\"Operation failed\""
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Transient errors are retryable; structured metadata lets the agent retry or explain appropriately."
@@ -3366,11 +3366,11 @@
     "options": [
       {
         "key": "A",
-        "text": "As an access failure"
+        "text": "As a valid empty result, not an error"
       },
       {
         "key": "B",
-        "text": "As a valid empty result, not an error"
+        "text": "As a permission error"
       },
       {
         "key": "C",
@@ -3378,11 +3378,11 @@
       },
       {
         "key": "D",
-        "text": "As a permission error"
+        "text": "As an access failure"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "A successful query with no matches is a valid empty result, distinct from an access failure."
@@ -3396,7 +3396,7 @@
     "options": [
       {
         "key": "A",
-        "text": "A timeout from an unreachable service"
+        "text": "A policy violation for an unauthorized refund"
       },
       {
         "key": "B",
@@ -3404,7 +3404,7 @@
       },
       {
         "key": "C",
-        "text": "A policy violation for an unauthorized refund"
+        "text": "A timeout from an unreachable service"
       },
       {
         "key": "D",
@@ -3426,23 +3426,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Tool proliferation"
-      },
-      {
-        "key": "B",
         "text": "Replacing a generic tool with a constrained alternative"
       },
       {
+        "key": "B",
+        "text": "Duplicating tools across agents"
+      },
+      {
         "key": "C",
-        "text": "Removing the capability entirely"
+        "text": "Tool proliferation"
       },
       {
         "key": "D",
-        "text": "Duplicating tools across agents"
+        "text": "Removing the capability entirely"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Constrained tools with defined inputs reduce misuse and make behaviour predictable."
@@ -3460,11 +3460,11 @@
       },
       {
         "key": "B",
-        "text": "any"
+        "text": "A forced selection of one named tool"
       },
       {
         "key": "C",
-        "text": "A forced selection of one named tool"
+        "text": "any"
       },
       {
         "key": "D",
@@ -3472,7 +3472,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "\"any\" guarantees a tool call while leaving the choice to the model; \"auto\" allows a text reply."
@@ -3490,19 +3490,19 @@
       },
       {
         "key": "B",
-        "text": "A scoped verify_fact tool for simple checks, with complex verifications routed through the coordinator"
-      },
-      {
-        "key": "C",
         "text": "No verification at all"
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Copy every search tool into the synthesis agent"
+      },
+      {
+        "key": "D",
+        "text": "A scoped verify_fact tool for simple checks, with complex verifications routed through the coordinator"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Scoped cross-role tools serve high-frequency needs while preserving separation of concerns."
@@ -3516,23 +3516,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Only one scope can be active at a time"
-      },
-      {
-        "key": "B",
         "text": "Project-scoped and user-scoped servers can be available together"
       },
       {
+        "key": "B",
+        "text": "Project servers must be declared in ~/.claude.json"
+      },
+      {
         "key": "C",
-        "text": "User-scoped servers override project servers entirely"
+        "text": "Only one scope can be active at a time"
       },
       {
         "key": "D",
-        "text": "Project servers must be declared in ~/.claude.json"
+        "text": "User-scoped servers override project servers entirely"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Project (.mcp.json) and user (~/.claude.json) servers are both available; use scope to decide who gets them."
@@ -3554,11 +3554,11 @@
       },
       {
         "key": "C",
-        "text": "Add 40 separate tools, one per table"
+        "text": "Hide the content from the agent"
       },
       {
         "key": "D",
-        "text": "Hide the content from the agent"
+        "text": "Add 40 separate tools, one per table"
       }
     ],
     "correct": [
@@ -3576,11 +3576,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Used only from the first server listed"
+        "text": "Hidden unless enabled tool by tool"
       },
       {
         "key": "B",
-        "text": "Discovered at connection time and available to the agent simultaneously"
+        "text": "Used only from the first server listed"
       },
       {
         "key": "C",
@@ -3588,11 +3588,11 @@
       },
       {
         "key": "D",
-        "text": "Hidden unless enabled tool by tool"
+        "text": "Discovered at connection time and available to the agent simultaneously"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Tools from all connected servers are discovered and usable together, which is why descriptions must differentiate them."
@@ -3606,23 +3606,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Grep"
+        "text": "Write"
       },
       {
         "key": "B",
-        "text": "Glob"
-      },
-      {
-        "key": "C",
         "text": "Edit"
       },
       {
+        "key": "C",
+        "text": "Glob"
+      },
+      {
         "key": "D",
-        "text": "Write"
+        "text": "Grep"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Glob matches file paths by pattern; Grep searches file contents."
@@ -3636,7 +3636,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Read every file first"
+        "text": "Glob all files and Write a map"
       },
       {
         "key": "B",
@@ -3644,7 +3644,7 @@
       },
       {
         "key": "C",
-        "text": "Glob all files and Write a map"
+        "text": "Read every file first"
       },
       {
         "key": "D",
@@ -3666,23 +3666,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Read the full file, modify its content, then Write the whole file"
-      },
-      {
-        "key": "B",
-        "text": "Write the file first, then Read it"
-      },
-      {
-        "key": "C",
         "text": "Use Grep to replace the text"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Call Edit again with an empty string"
+      },
+      {
+        "key": "C",
+        "text": "Read the full file, modify its content, then Write the whole file"
+      },
+      {
+        "key": "D",
+        "text": "Write the file first, then Read it"
       }
     ],
     "correct": [
-      "A"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "When no unique anchor exists, Read the content, modify it and Write the file back."
@@ -3696,15 +3696,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Imports a binary file into the context"
+        "text": "Forces a skill to run"
       },
       {
         "key": "B",
-        "text": "References an external file so CLAUDE.md stays modular"
+        "text": "Imports a binary file into the context"
       },
       {
         "key": "C",
-        "text": "Forces a skill to run"
+        "text": "References an external file so CLAUDE.md stays modular"
       },
       {
         "key": "D",
@@ -3712,7 +3712,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "@import pulls in focused standards files, keeping the main CLAUDE.md small and maintainable."
@@ -3756,23 +3756,23 @@
     "options": [
       {
         "key": "A",
-        "text": "~/.claude/CLAUDE.md on the CI runner"
-      },
-      {
-        "key": "B",
         "text": "The project-level CLAUDE.md in the repository"
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "A skill that is invoked manually"
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Only in CI environment variables"
+      },
+      {
+        "key": "D",
+        "text": "~/.claude/CLAUDE.md on the CI runner"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "CI-invoked Claude Code reads the repository's project context, so standards belong in the committed CLAUDE.md."
@@ -3786,23 +3786,23 @@
     "options": [
       {
         "key": "A",
-        "text": "context: fork only"
-      },
-      {
-        "key": "B",
-        "text": "allowed-tools restricted to read-only tools"
-      },
-      {
-        "key": "C",
         "text": "argument-hint set to read"
       },
       {
-        "key": "D",
+        "key": "B",
+        "text": "context: fork only"
+      },
+      {
+        "key": "C",
         "text": "Moving the skill to user scope"
+      },
+      {
+        "key": "D",
+        "text": "allowed-tools restricted to read-only tools"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "allowed-tools restricts which tools run during skill execution, preventing destructive actions."
@@ -3816,7 +3816,7 @@
     "options": [
       {
         "key": "A",
-        "text": "allowed-tools"
+        "text": "paths"
       },
       {
         "key": "B",
@@ -3824,11 +3824,11 @@
       },
       {
         "key": "C",
-        "text": "context: fork"
+        "text": "allowed-tools"
       },
       {
         "key": "D",
-        "text": "paths"
+        "text": "context: fork"
       }
     ],
     "correct": [
@@ -3846,7 +3846,7 @@
     "options": [
       {
         "key": "A",
-        "text": "CLAUDE.md, which is always loaded"
+        "text": "A hook that runs on every tool call"
       },
       {
         "key": "B",
@@ -3854,7 +3854,7 @@
       },
       {
         "key": "C",
-        "text": "A hook that runs on every tool call"
+        "text": "CLAUDE.md, which is always loaded"
       },
       {
         "key": "D",
@@ -3876,23 +3876,23 @@
     "options": [
       {
         "key": "A",
-        "text": "A directory CLAUDE.md in every folder"
+        "text": "A skill that is invoked manually"
       },
       {
         "key": "B",
-        "text": "A .claude/rules/testing.md file with paths: [\"**/*.test.tsx\"]"
-      },
-      {
-        "key": "C",
         "text": "A single root CLAUDE.md"
       },
       {
+        "key": "C",
+        "text": "A directory CLAUDE.md in every folder"
+      },
+      {
         "key": "D",
-        "text": "A skill that is invoked manually"
+        "text": "A .claude/rules/testing.md file with paths: [\"**/*.test.tsx\"]"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Glob-scoped rules apply to matching files regardless of their directory."
@@ -3906,11 +3906,11 @@
     "options": [
       {
         "key": "A",
-        "text": "At every session start"
+        "text": "When Claude edits files that match the glob pattern"
       },
       {
         "key": "B",
-        "text": "When Claude edits files that match the glob pattern"
+        "text": "When the branch is pushed"
       },
       {
         "key": "C",
@@ -3918,11 +3918,11 @@
       },
       {
         "key": "D",
-        "text": "When the branch is pushed"
+        "text": "At every session start"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Path-scoped rules load only when matching files are edited, which reduces irrelevant context."
@@ -3936,23 +3936,23 @@
     "options": [
       {
         "key": "A",
-        "text": "They are faster to write"
-      },
-      {
-        "key": "B",
         "text": "They apply to matching files regardless of their directory location"
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "They cannot be overridden"
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "They load before the user session starts"
+      },
+      {
+        "key": "D",
+        "text": "They are faster to write"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Directory CLAUDE.md files are bound to a directory; glob rules follow the file pattern."
@@ -3966,23 +3966,23 @@
     "options": [
       {
         "key": "A",
-        "text": "It runs the tests automatically"
-      },
-      {
-        "key": "B",
         "text": "It enables safe exploration and design before changes, preventing costly rework"
       },
       {
+        "key": "B",
+        "text": "It skips verification"
+      },
+      {
         "key": "C",
-        "text": "It disables file editing permanently"
+        "text": "It runs the tests automatically"
       },
       {
         "key": "D",
-        "text": "It skips verification"
+        "text": "It disables file editing permanently"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Plan mode lets Claude explore and design before committing to changes."
@@ -3996,11 +3996,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Edits files in parallel"
+        "text": "Isolates verbose discovery and returns summaries to preserve the main context"
       },
       {
         "key": "B",
-        "text": "Isolates verbose discovery and returns summaries to preserve the main context"
+        "text": "Runs CI pipelines"
       },
       {
         "key": "C",
@@ -4008,11 +4008,11 @@
       },
       {
         "key": "D",
-        "text": "Runs CI pipelines"
+        "text": "Edits files in parallel"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Explore runs verbose discovery in isolation and returns condensed findings."
@@ -4026,15 +4026,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Plan mode"
-      },
-      {
-        "key": "B",
         "text": "Direct execution"
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "Interview pattern only"
+      },
+      {
+        "key": "C",
+        "text": "Plan mode"
       },
       {
         "key": "D",
@@ -4042,7 +4042,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Well-scoped, well-understood changes do not need planning overhead."
@@ -4056,23 +4056,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Stop after writing the tests"
-      },
-      {
-        "key": "B",
-        "text": "Iterate by sharing test failures to guide the implementation"
-      },
-      {
-        "key": "C",
         "text": "Delete the failing tests"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Skip implementation"
+      },
+      {
+        "key": "C",
+        "text": "Iterate by sharing test failures to guide the implementation"
+      },
+      {
+        "key": "D",
+        "text": "Stop after writing the tests"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Test failures are the feedback that drives progressive improvement."
@@ -4086,23 +4086,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Let Claude write code without any feedback"
-      },
-      {
-        "key": "B",
-        "text": "Surface considerations the developer may not have anticipated before implementing"
-      },
-      {
-        "key": "C",
         "text": "Shorten the prompt"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Replace the test suite"
+      },
+      {
+        "key": "C",
+        "text": "Surface considerations the developer may not have anticipated before implementing"
+      },
+      {
+        "key": "D",
+        "text": "Let Claude write code without any feedback"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Asking questions first surfaces design considerations such as failure modes in unfamiliar domains."
@@ -4116,24 +4116,24 @@
     "options": [
       {
         "key": "A",
-        "text": "\"2024-03-05 becomes 05/03/2024\""
+        "text": "\"Use a good format\""
       },
       {
         "key": "B",
-        "text": "\"Make the dates look nice\""
-      },
-      {
-        "key": "C",
         "text": "\"null stays null\""
       },
       {
+        "key": "C",
+        "text": "\"Make the dates look nice\""
+      },
+      {
         "key": "D",
-        "text": "\"Use a good format\""
+        "text": "\"2024-03-05 becomes 05/03/2024\""
       }
     ],
     "correct": [
-      "A",
-      "C"
+      "B",
+      "D"
     ],
     "selectCount": 2,
     "explanation": "Concrete input/output pairs define the transformation precisely, including edge cases."
@@ -4147,11 +4147,11 @@
     "options": [
       {
         "key": "A",
-        "text": "-p / --print"
+        "text": "--verbose"
       },
       {
         "key": "B",
-        "text": "--output-format json"
+        "text": "-p / --print"
       },
       {
         "key": "C",
@@ -4159,17 +4159,17 @@
       },
       {
         "key": "D",
-        "text": "--verbose"
+        "text": "--continue"
       },
       {
         "key": "E",
-        "text": "--continue"
+        "text": "--output-format json"
       }
     ],
     "correct": [
-      "A",
       "B",
-      "C"
+      "C",
+      "E"
     ],
     "selectCount": 3,
     "explanation": "-p prevents waiting for input; --output-format json and --json-schema make the output parseable against a schema."
@@ -4183,23 +4183,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Start fresh with no context"
-      },
-      {
-        "key": "B",
-        "text": "Include prior findings and instruct Claude to report only new or still-unaddressed issues"
-      },
-      {
-        "key": "C",
         "text": "Include only the latest commit message"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Include the entire git history"
+      },
+      {
+        "key": "C",
+        "text": "Include prior findings and instruct Claude to report only new or still-unaddressed issues"
+      },
+      {
+        "key": "D",
+        "text": "Start fresh with no context"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Prior findings in context, with a clear instruction, prevent duplicate comments."
@@ -4213,11 +4213,11 @@
     "options": [
       {
         "key": "A",
-        "text": "They make output longer"
+        "text": "They define exactly which issues to report, reducing false positives"
       },
       {
         "key": "B",
-        "text": "They define exactly which issues to report, reducing false positives"
+        "text": "They replace examples"
       },
       {
         "key": "C",
@@ -4225,11 +4225,11 @@
       },
       {
         "key": "D",
-        "text": "They replace examples"
+        "text": "They make output longer"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Specific criteria define what to report; general instructions like \"be conservative\" do not improve precision."
@@ -4243,23 +4243,23 @@
     "options": [
       {
         "key": "A",
-        "text": "When the code looks old"
+        "text": "When any TODO comment appears"
       },
       {
         "key": "B",
-        "text": "When a concrete example shows data loss or a security exposure"
-      },
-      {
-        "key": "C",
         "text": "When a developer dislikes the style"
       },
       {
+        "key": "C",
+        "text": "When a concrete example shows data loss or a security exposure"
+      },
+      {
         "key": "D",
-        "text": "When any TODO comment appears"
+        "text": "When the code looks old"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Severity criteria should be anchored to concrete code examples."
@@ -4277,19 +4277,19 @@
       },
       {
         "key": "B",
-        "text": "Returning null for the absent field, with reasoning"
+        "text": "Removing the field from the schema"
       },
       {
         "key": "C",
-        "text": "Guessing from surrounding context"
+        "text": "Returning null for the absent field, with reasoning"
       },
       {
         "key": "D",
-        "text": "Removing the field from the schema"
+        "text": "Guessing from surrounding context"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Examples that show correct handling of absence reduce fabrication."
@@ -4303,15 +4303,15 @@
     "options": [
       {
         "key": "A",
-        "text": "None"
+        "text": "Twenty examples of unrelated cases"
       },
       {
         "key": "B",
-        "text": "2-4 examples that show the reasoning behind each choice"
+        "text": "None"
       },
       {
         "key": "C",
-        "text": "Twenty examples of unrelated cases"
+        "text": "2-4 examples that show the reasoning behind each choice"
       },
       {
         "key": "D",
@@ -4319,7 +4319,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "A small number of targeted examples with reasoning teaches judgment for ambiguous cases."
@@ -4333,23 +4333,23 @@
     "options": [
       {
         "key": "A",
-        "text": "They make output longer"
-      },
-      {
-        "key": "B",
-        "text": "They demonstrate handling of informal measurements and varied document structures"
-      },
-      {
-        "key": "C",
         "text": "They lower the schema requirements"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "They replace the schema"
+      },
+      {
+        "key": "C",
+        "text": "They make output longer"
+      },
+      {
+        "key": "D",
+        "text": "They demonstrate handling of informal measurements and varied document structures"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Examples that cover varied formats let the model generalize rather than invent values."
@@ -4367,19 +4367,19 @@
       },
       {
         "key": "B",
-        "text": "Eliminates syntax errors; semantic errors such as totals that do not sum still need validation"
-      },
-      {
-        "key": "C",
         "text": "Eliminates wrong values and missing source data"
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Eliminates the need for any extraction"
+      },
+      {
+        "key": "D",
+        "text": "Eliminates syntax errors; semantic errors such as totals that do not sum still need validation"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Schemas eliminate syntax errors, not semantic ones, which need explicit validation."
@@ -4393,23 +4393,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Nullable fields for information that may be absent"
+        "text": "Default values such as 0 for missing amounts"
       },
       {
         "key": "B",
-        "text": "Required fields for every value"
-      },
-      {
-        "key": "C",
         "text": "An \"unclear\" enum value for ambiguous cases"
       },
       {
+        "key": "C",
+        "text": "Nullable fields for information that may be absent"
+      },
+      {
         "key": "D",
-        "text": "Default values such as 0 for missing amounts"
+        "text": "Required fields for every value"
       }
     ],
     "correct": [
-      "A",
+      "B",
       "C"
     ],
     "selectCount": 2,
@@ -4428,19 +4428,19 @@
       },
       {
         "key": "B",
-        "text": "The required information is absent from the source document"
+        "text": "A field is placed in the wrong object"
       },
       {
         "key": "C",
-        "text": "A total does not sum correctly"
+        "text": "The required information is absent from the source document"
       },
       {
         "key": "D",
-        "text": "A field is placed in the wrong object"
+        "text": "A total does not sum correctly"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Retries fix format and structure errors; they cannot create information that is not in the source."
@@ -4462,11 +4462,11 @@
       },
       {
         "key": "C",
-        "text": "To double the cost of extraction"
+        "text": "To replace the output schema"
       },
       {
         "key": "D",
-        "text": "To replace the output schema"
+        "text": "To double the cost of extraction"
       }
     ],
     "correct": [
@@ -4484,23 +4484,23 @@
     "options": [
       {
         "key": "A",
-        "text": "It saves 50% of cost"
-      },
-      {
-        "key": "B",
-        "text": "It cannot execute multi-turn tool calls within a single request"
-      },
-      {
-        "key": "C",
         "text": "It supports custom_id correlation"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "It suits overnight processing"
+      },
+      {
+        "key": "C",
+        "text": "It cannot execute multi-turn tool calls within a single request"
+      },
+      {
+        "key": "D",
+        "text": "It saves 50% of cost"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Batches are asynchronous and do not support multi-turn tool calling inside one request."
@@ -4514,7 +4514,7 @@
     "options": [
       {
         "key": "A",
-        "text": "To increase batch cost"
+        "text": "To remove custom_id"
       },
       {
         "key": "B",
@@ -4522,7 +4522,7 @@
       },
       {
         "key": "C",
-        "text": "To remove custom_id"
+        "text": "To increase batch cost"
       },
       {
         "key": "D",
@@ -4544,23 +4544,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Message Batches API"
-      },
-      {
-        "key": "B",
-        "text": "The synchronous API"
-      },
-      {
-        "key": "C",
         "text": "An overnight batch"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "A batch with a 24-hour wait"
+      },
+      {
+        "key": "C",
+        "text": "The synchronous API"
+      },
+      {
+        "key": "D",
+        "text": "Message Batches API"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Blocking workflows need synchronous responses; batches have no latency guarantee."
@@ -4574,11 +4574,11 @@
     "options": [
       {
         "key": "A",
-        "text": "It always catches the model's own bugs"
+        "text": "The model retains its generation reasoning and is less likely to question its own decisions"
       },
       {
         "key": "B",
-        "text": "The model retains its generation reasoning and is less likely to question its own decisions"
+        "text": "It always catches the model's own bugs"
       },
       {
         "key": "C",
@@ -4590,7 +4590,7 @@
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Independent review instances, without the generator's reasoning, catch issues self-review misses."
@@ -4604,23 +4604,23 @@
     "options": [
       {
         "key": "A",
-        "text": "It guarantees correctness"
-      },
-      {
-        "key": "B",
         "text": "It can support calibrated review routing once calibration is validated on labeled data"
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "It removes the need for human review"
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "It replaces the test suite"
+      },
+      {
+        "key": "D",
+        "text": "It guarantees correctness"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Self-reported confidence is only useful after it is validated against labeled outcomes."
@@ -4634,11 +4634,11 @@
     "options": [
       {
         "key": "A",
-        "text": "It improves accuracy over time"
+        "text": "It adds sources automatically"
       },
       {
         "key": "B",
-        "text": "It condenses numerical values, dates and customer-stated expectations into vague summaries"
+        "text": "It improves accuracy over time"
       },
       {
         "key": "C",
@@ -4646,11 +4646,11 @@
       },
       {
         "key": "D",
-        "text": "It adds sources automatically"
+        "text": "It condenses numerical values, dates and customer-stated expectations into vague summaries"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Summaries lose precise numbers and dates; those facts belong in a persistent case-facts block."
@@ -4664,23 +4664,23 @@
     "options": [
       {
         "key": "A",
-        "text": "In the middle section"
-      },
-      {
-        "key": "B",
-        "text": "At the beginning or end, organized under explicit section headers"
-      },
-      {
-        "key": "C",
         "text": "At random positions"
       },
       {
-        "key": "D",
+        "key": "B",
         "text": "Only in metadata"
+      },
+      {
+        "key": "C",
+        "text": "At the beginning or end, organized under explicit section headers"
+      },
+      {
+        "key": "D",
+        "text": "In the middle section"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Models process the beginning and end of long inputs more reliably than the middle."
@@ -4694,15 +4694,15 @@
     "options": [
       {
         "key": "A",
-        "text": "Faster responses"
+        "text": "Higher accuracy on every question"
       },
       {
         "key": "B",
-        "text": "Referring to typical patterns instead of the specific classes discovered earlier"
+        "text": "Faster responses"
       },
       {
         "key": "C",
-        "text": "Higher accuracy on every question"
+        "text": "Referring to typical patterns instead of the specific classes discovered earlier"
       },
       {
         "key": "D",
@@ -4710,7 +4710,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Degraded context leads to generic references instead of the specific findings."
@@ -4728,11 +4728,11 @@
       },
       {
         "key": "B",
-        "text": "Sentiment is not a reliable proxy for the actual complexity of the case"
+        "text": "Sentiment is always accurate"
       },
       {
         "key": "C",
-        "text": "Sentiment is always accurate"
+        "text": "Sentiment is not a reliable proxy for the actual complexity of the case"
       },
       {
         "key": "D",
@@ -4740,7 +4740,7 @@
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "Frustration does not correlate with case complexity; escalate on explicit criteria instead."
@@ -4754,23 +4754,23 @@
     "options": [
       {
         "key": "A",
-        "text": "Keep refusing and offering the same resolution"
+        "text": "Ask the customer to rate the agent first"
       },
       {
         "key": "B",
-        "text": "Escalate, because the customer has reiterated the preference"
-      },
-      {
-        "key": "C",
         "text": "Ignore the customer's preference"
       },
       {
+        "key": "C",
+        "text": "Escalate, because the customer has reiterated the preference"
+      },
+      {
         "key": "D",
-        "text": "Ask the customer to rate the agent first"
+        "text": "Keep refusing and offering the same resolution"
       }
     ],
     "correct": [
-      "B"
+      "C"
     ],
     "selectCount": 1,
     "explanation": "An explicit, repeated request for a human is an escalation trigger."
@@ -4784,24 +4784,24 @@
     "options": [
       {
         "key": "A",
-        "text": "The customer explicitly asks for a human"
+        "text": "The customer used an exclamation mark"
       },
       {
         "key": "B",
-        "text": "The policy is silent on the specific request"
+        "text": "The customer explicitly asks for a human"
       },
       {
         "key": "C",
-        "text": "The agent's self-reported confidence is 0.6"
+        "text": "The policy is silent on the specific request"
       },
       {
         "key": "D",
-        "text": "The customer used an exclamation mark"
+        "text": "The agent's self-reported confidence is 0.6"
       }
     ],
     "correct": [
-      "A",
-      "B"
+      "B",
+      "C"
     ],
     "selectCount": 2,
     "explanation": "Explicit requests and policy gaps are escalation triggers; confidence scores and tone are not reliable signals."
@@ -4815,7 +4815,7 @@
     "options": [
       {
         "key": "A",
-        "text": "It is faster"
+        "text": "It increases cost"
       },
       {
         "key": "B",
@@ -4823,11 +4823,11 @@
       },
       {
         "key": "C",
-        "text": "It breaks JSON output"
+        "text": "It is faster"
       },
       {
         "key": "D",
-        "text": "It increases cost"
+        "text": "It breaks JSON output"
       }
     ],
     "correct": [
@@ -4849,15 +4849,15 @@
       },
       {
         "key": "B",
-        "text": "The ordering of the results"
+        "text": "The token count"
       },
       {
         "key": "C",
-        "text": "The model version used"
+        "text": "The ordering of the results"
       },
       {
         "key": "D",
-        "text": "The token count"
+        "text": "The model version used"
       }
     ],
     "correct": [
@@ -4875,11 +4875,11 @@
     "options": [
       {
         "key": "A",
-        "text": "Keeps the main agent's context focused on high-level understanding while subagents investigate specifics"
+        "text": "Replaces the main agent entirely"
       },
       {
         "key": "B",
-        "text": "Replaces the main agent entirely"
+        "text": "Keeps the main agent's context focused on high-level understanding while subagents investigate specifics"
       },
       {
         "key": "C",
@@ -4891,7 +4891,7 @@
       }
     ],
     "correct": [
-      "A"
+      "B"
     ],
     "selectCount": 1,
     "explanation": "Delegation isolates verbose exploration output from the coordinating context."
@@ -4909,19 +4909,19 @@
       },
       {
         "key": "B",
-        "text": "Persisting key findings across context boundaries"
-      },
-      {
-        "key": "C",
         "text": "Storing secrets"
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "Slowing the model down"
+      },
+      {
+        "key": "D",
+        "text": "Persisting key findings across context boundaries"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Scratchpads hold findings outside the context window so they survive resets and compaction."
@@ -4935,23 +4935,23 @@
     "options": [
       {
         "key": "A",
-        "text": "When a task is complete"
+        "text": "Before every edit"
       },
       {
         "key": "B",
-        "text": "When context fills with verbose discovery output during an extended exploration"
-      },
-      {
-        "key": "C",
         "text": "To delete long-term memory"
       },
       {
+        "key": "C",
+        "text": "When a task is complete"
+      },
+      {
         "key": "D",
-        "text": "Before every edit"
+        "text": "When context fills with verbose discovery output during an extended exploration"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "/compact reduces context usage when it fills with verbose output mid-investigation."
@@ -4965,23 +4965,23 @@
     "options": [
       {
         "key": "A",
-        "text": "To measure only sampling error"
-      },
-      {
-        "key": "B",
         "text": "To measure ongoing error rates and detect novel error patterns"
       },
       {
-        "key": "C",
+        "key": "B",
         "text": "It serves no useful purpose"
       },
       {
-        "key": "D",
+        "key": "C",
         "text": "To check the model version"
+      },
+      {
+        "key": "D",
+        "text": "To measure only sampling error"
       }
     ],
     "correct": [
-      "B"
+      "A"
     ],
     "selectCount": 1,
     "explanation": "Sampling high-confidence output catches errors that confidence scores miss."
@@ -4995,7 +4995,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Random cases"
+        "text": "Every ticket"
       },
       {
         "key": "B",
@@ -5003,11 +5003,11 @@
       },
       {
         "key": "C",
-        "text": "The newest tickets only"
+        "text": "Random cases"
       },
       {
         "key": "D",
-        "text": "Every ticket"
+        "text": "The newest tickets only"
       }
     ],
     "correct": [
@@ -5029,7 +5029,7 @@
       },
       {
         "key": "B",
-        "text": "So that differences over time are not misread as contradictions"
+        "text": "Because JSON requires it"
       },
       {
         "key": "C",
@@ -5037,11 +5037,11 @@
       },
       {
         "key": "D",
-        "text": "Because JSON requires it"
+        "text": "So that differences over time are not misread as contradictions"
       }
     ],
     "correct": [
-      "B"
+      "D"
     ],
     "selectCount": 1,
     "explanation": "Temporal metadata separates changes over time from genuine disagreement."
@@ -5055,7 +5055,7 @@
     "options": [
       {
         "key": "A",
-        "text": "Prose"
+        "text": "Images"
       },
       {
         "key": "B",
@@ -5063,11 +5063,11 @@
       },
       {
         "key": "C",
-        "text": "Random bullet lists"
+        "text": "Prose"
       },
       {
         "key": "D",
-        "text": "Images"
+        "text": "Random bullet lists"
       }
     ],
     "correct": [
@@ -5089,11 +5089,11 @@
       },
       {
         "key": "B",
-        "text": "The coordinator silently picks one of two conflicting numbers"
+        "text": "Synthesis annotates conflicts with both attributions"
       },
       {
         "key": "C",
-        "text": "Synthesis annotates conflicts with both attributions"
+        "text": "The coordinator silently picks one of two conflicting numbers"
       },
       {
         "key": "D",
@@ -5102,7 +5102,7 @@
     ],
     "correct": [
       "A",
-      "C"
+      "B"
     ],
     "selectCount": 2,
     "explanation": "Claim-source mappings and annotated conflicts keep attribution intact through synthesis."
